@@ -67,12 +67,21 @@ Lorem ipsum
 	An intuitive way to model such a collaboration, is by using workflow, which will be the basis of this article.
 	Performing collaborative work on a workflow between multiple, possibly untrusted, parties is mostly the same challenge as is posed in any distributed network. 
 	Most solutions to this are, however, cumbersome in that they require a very large amount of data to be transmitted.
-	We will investigate whether or not it is possible to create a secure implementation of a Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
+	As the new innovation applied in this project is Intel SGX, it will be investigate what sort of advantages it grants in the implementation of a distributed network.
+
+		\subsection{Goals}
+
+		During this project we will investigate whether or not it is possible to create a secure implementation of a Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
+		It will be split into two phases:
+		\begin{enumerate}
+			\item The first phase, which is described in its entirety in this report, is an investigation into the feasibility and usability of Intel SGX in conjunction with distributed DCR graphs.
+			\item The second phase, will be the design and implementation of the DCR-SGX system along with a more in-depth foray into Intel SGX and its capabilities. Should this prove more easily attainable than it is currently believed to be, the implementation will be expanded to include generic applications, creating a distributed network of smart contracts\cite{smart-contracts}.
+		\end{enumerate}
 
 	\section{Related works}
 
 	An existing platform which partially solves this problem is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
-	It does however also feature a currency, making computations disproportionately expensive, and the excessive computations needed by proof-of-work based blockchains.
+	It does however also feature a currency, making computations disproportionately expensive, and the large amounts of computations required by proof-of-work based blockchains.
 
 	\section{Background}
 
@@ -144,6 +153,11 @@ Lorem ipsum
 	\section{Conclusion}
 
 	\begin{thebibliography}{9}
+
+		\bibitem{smart-contracts}
+		Nick Szabo.
+		\textit{Formalizing and Securing Relationships on Public Networks}.
+		Peer-reviewed journal on the internet.
 
 		\bibitem{ethereum-white-paper}
 		\textit{Ethereum White Paper}.
