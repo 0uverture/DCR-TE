@@ -13,6 +13,8 @@
 \definecolor{listinggray}{gray}{0.9}
 \definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
 
+\newcommand\cpp{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\relsize{-3}{\textbf{++}}}}
+
 \lstset {
 	    backgroundcolor=\color{lbcolor},
 	    tabsize=4,    
@@ -104,7 +106,7 @@ Lorem ipsum
 			Executing an already executed activity will have no effect on the executed attribute.
 
 		\subsubsection{Relations}
-		
+
 		There are five types of relations which define different types of relationships between activities in a workflow. 
 		These relations are:
 
@@ -118,15 +120,25 @@ Lorem ipsum
 
 		\subsection{SGX}
 
+		Intel SGX is a technology which allows users to define protected areas of memory, so called enclaves, and run code within these enclaves.
+		Intel can then guarantee that any code run this way is unmolested by any process running outside of the enclave.
+		An additional feature of Intel SGX is that the result of any code run using Intel SGX can be verified by other users, given the code and the output.
+		This is made possible through asymmetric encryption, with Intel as the key distributor.
+		To ensure that keys are only distributed to trusted users, Intel offers attestation services as a way of key distribution.
+
 		\subsection{Consensus}
 
 	\section{Challenges}
 
 		\subsection{SGX}
 
+		Due to SGX being a security guarantee made by Intel all work involving it, the proposed project requires absolute trust in Intel keeping private keys secure and them not violating the confidentiality of machines with their hardware.
+
 		\subsection{Consensus}	
 
 	\section{Implementation}
+
+	In order to demonstrate that the proposed solution could work, we demonstrate the implementation of a monotonic counter in \cpp.
 
 	\section{Conclusion}
 
