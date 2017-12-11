@@ -60,34 +60,51 @@ Lorem ipsum
 
 	\section{Introduction}
 
+	In an increasingly digital business world, collaboration between companies is an everyday occurrence.
+	An intuitive way to model such a collaboration, is by using workflow, which will be the basis of this article.
+	Performing collaborative work on a workflow between multiple, possibly untrusted, parties is mostly the same challenge as is posed in any distributed network. 
+	Most solutions to this are however cumbersome in that they require a very large amount of data to be transmitted.
+	We will investigate whether or not it is possible to create a secure implementation of a Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
+
 	\section{Related works}
+
+	An existing platform which partially solves this problem is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
+	It does however also feature a currency, making computations disproportionately expensive, and the excessive computations needed by proof-of-work based blockchains.
 
 	\section{Background}
 
+	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
+
 		\subsection{Dynamic Condition Response}
+
 		A DCR graph is a representation of a workflow.
 		The graph is made up of one or more activities with a number of relations between them. 
 		The following section is loosely based on a similar description found in previous work\cite{dcreum}.
 
 		\subsubsection{Activity}
+
 		The activities in a DCR graph have three attributes: included, executed and pending. 
 		The attributes can be true or false. 
 		Furthermore an activity can have role and actor specific execution rights.
 
 			\paragraph{Included attribute}
+
 			If the include attribute of an activity is true, the activity is included and it can be executed. 
 			If the attribute is false, the activity is excluded and can no longer be executed.
 
 			\paragraph{Pending attribute}
+
 			If any activity in a workflow has a pending attribute that is true and the activity is included, the workflow is in an unfinished state.
 			Every time an activity is executed its pending attribute is set to false.
 			This means that setting the pending attribute of an included activity to true is specifying that this activity must be executed or excluded at some point to leave the workflow in a finished state.
 
 			\paragraph{Executed attribute}
+
 			If an activities executed attribute is false executing the activity will set its executed attribute to true.
 			Executing an already executed activity will have no effect on the executed attribute.
 
 		\subsubsection{Relations}
+		
 		There are five types of relations which define different types of relationships between activities in a workflow. 
 		These relations are:
 
@@ -114,6 +131,22 @@ Lorem ipsum
 	\section{Conclusion}
 
 	\begin{thebibliography}{9}
+
+		\bibitem{ethereum-white-paper}
+		Various authors.
+		\textit{Ethereum White Paper}.
+		\url{https://github.com/ethereum/wiki/wiki/White-Paper}.
+		Accessed 2017-12-11.
+
+		\bibitem{dcr-paper}
+		Thomas T. Hildebrandt \& Raghava Rao Mukkamala.
+		\textit{Declarative Event-Based Workflow as Distributed Dynamic Condition Response Graphs}.
+		IT University of Copenhagen.
+
+		\bibitem{intel-sgx-explained}
+		Victor Costan \& Srinivas Devadas.
+		\textit{Intel SGX Explained}.
+		Computer Science and Artificial Intelligence Laboratory Massachusetts Institute of Technology.
 
 		\bibitem{dcreum}
 		Mikkel Gaub, Tróndur Høgnason, Malthe Ettrup Kirkbro \& Mads Frederik Madsen.
