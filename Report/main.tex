@@ -128,6 +128,14 @@ Lorem ipsum
 		To ensure that keys are only distributed to trusted users, Intel offers attestation services as a way of key distribution.
 
 		\subsection{Consensus}
+		Consensus is the problem of establishing agreement between two or more processes in a distributed setting. Formally consensus is defined as a protocol in which $N$ processes ($P_0, P_1, \dots, P_{n-1}$) starts in an undecided state. Each process will then propose a single value, $v_i$, from a set of values, $D$. The processes communicate their propositions to each other, and each decide on a decision-variable, $d_i$. They are now in a decided state. If the following requirements are met, the protocol solves the consensus problem:
+		\begin{description}
+			\item[Termination] Every process eventually sets its decision-variable. 
+			\item[Agreement] The decision-variables of all correct processes are set to the same value.
+			\item[Integrity] If every correct process proposes the same $v$, then all correct processes decide $d_i = v$.
+		\end{description}
+
+		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process.\\
 
 	\section{Challenges}
 
@@ -135,7 +143,9 @@ Lorem ipsum
 
 		Due to SGX being a security guarantee made by Intel all work involving it, the proposed project requires absolute trust in Intel keeping private keys secure and them not violating the confidentiality of machines with their hardware.
 
-		\subsection{Consensus}	
+		\subsection{Consensus}
+		Given that our problem deals with agreeing on a history of a workflow, we must somehow circumvent FLP impossibility.
+		A few solutions for circumventing FLP-impossibility have been suggested, for instance using a probabilistic protocol, which achieves consensus except for some negligible probability. Most notable of these is perhaps the blockchain technology, (formal analyses of the complexity and probability of success can be found in \cite{miller2014anonymous}). However, the basis of a blockchain succeeding is an incentive for peers to use computing power to secure the system. This incentive takes the form of a currency \cite{bitcoin-white-paper}. While a clever solution, we are not interested in basing our system on a currency, thus subjecting the viability of the system on the rise-and-fall of the rate 
 
 	\section{Implementation}
 
@@ -148,6 +158,11 @@ Lorem ipsum
 		\bibitem{ethereum-white-paper}
 		\textit{Ethereum White Paper}.
 		\url{https://github.com/ethereum/wiki/wiki/White-Paper}.
+		Accessed 2017-12-11.
+
+		\bibitem{bitcoin-white-paper}
+		\textit{Bitcoin White Paper}.
+		\url{https://bitcoin.org/bitcoin.pdf}.
 		Accessed 2017-12-11.
 
 		\bibitem{dcr-paper}
@@ -171,6 +186,14 @@ Lorem ipsum
 		\bibitem{sgx-dev-guide}
 		\textit{Intel® Software Guard Extensions Developer Guide}
 		\url{https://software.intel.com/en-us/documentation/sgx-developer-guide}
+
+		\bibitem{flp}
+		\textit{Impossibility of distributed consensus with one faulty process},
+		\url{https://dl.acm.org/citation.cfm?id=214121}
+
+		\bibitem{miller2014anonymous},
+  		\textit{Anonymous byzantine consensus from moderately-hard puzzles: A model for bitcoin},
+		\url{Available on line: http://nakamotoinstitute. org/research/anonymous-byzantine-consensus}
 
 	\end{thebibliography}
 
