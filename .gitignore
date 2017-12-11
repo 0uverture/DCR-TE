@@ -1,6 +1,8 @@
 
 # Created by https://www.gitignore.io/api/latex
 
+Report/main.pdf
+
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
 *.aux
