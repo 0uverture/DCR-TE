@@ -139,7 +139,6 @@ Lorem ipsum
 		\end{description}
 
 		\subsection{SGX}
-
 		Intel SGX is a technology which allows users to define protected areas of memory, so called enclaves, and run code within these enclaves.
 		Intel guarantees that any code run this way is unmolested by any process running outside of the enclave.
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
@@ -152,6 +151,46 @@ Lorem ipsum
 
 		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level.
 		To ensure that keys are only distributed to trusted users, Intel offers Attestation Services (IAS) as a way of key distribution.
+
+      \subsubsection{Enclave}
+      What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
+      \begin{description}
+        \item Processor Reserved Memory (PRM): a sequential block of memory reserved for SGX inaccessible from untrusted software and even hardware.
+        \item Enclave mode: a mode under which a logical processor gains access to the PRM, allowing trusted software exclusive access to its own memory.
+      \end{description}
+      Using these hardware facilities SGX defines the concept of an enclave.
+      An enclave is, as its name suggests, a software module isolated completely from the rest of the system.
+      Its memory is located solely in PRM, protecting it from tampering from other processes and enclaves running on the system.
+      % ...
+      % how?
+
+      While SGX provides powerful guarantees trough its enclave concept, it does not guarantee software correctness and will not protect against flawed software.
+      Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes.
+      % ref SDG
+      By minimizing the size of the TCB, and thus the amount of software one must trust, common security principles indicate that the chance of security flaws decreases.
+      % principle
+      % ref
+      In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{ECALLs} and \textit{OCALLS}.
+      This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs.
+
+      % Signature
+      When built, an enclave module is a plain binary on the untrusted file system.
+      As an enclave under such circumstances would be vulnerable to tampering before initialization, SGX enforces a strict signature policy.
+      An enclave must include an \textit{Enclave Signature} containing
+      \begin{itemize}
+        \item a hash of the code and initialization data of the enclave,
+        \item the author's public key
+        \item and an enclave version/product number.
+      \end{itemize}
+      During enclave initialization a hardware check is performed, ensuring the Enclave Signature matches the enclave binary loaded from the file system.
+      % ...
+
+      % Sealing
+      Another powerful tool of an SGX enclave is the ability to read and write data to an untrusted storage medium while ensuring confidentiality of its contents.
+      Such capabilities are needed as the PRM is volatile and will not persist a shut down.
+      In SGX this process is known as \textit{sealing} and allows encryption and decryption confidential to either the Enclave Signature, allowing only the current enclave version access, or the Enclave Signature without the version number, allowing the current enclave version as well as future updates versions access.
+      % encryption algos?
+      % distinguising between running enclave instances
 
 			\subsubsection{Attestation}
 
