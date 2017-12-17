@@ -8,6 +8,7 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{relsize}
+\usepackage{newfloat}
 
 % \linespread{1.5}
 
@@ -15,6 +16,14 @@
 \definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
 
 \newcommand\cpp{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\relsize{-3}{\textbf{++}}}}
+
+\DeclareFloatingEnvironment[
+    fileext=los,
+    listname=List of code snippets,
+    name=Snippet,
+    placement=tbhp,
+    within=none,
+]{snippet}
 
 \lstset {
 	    backgroundcolor=\color{lbcolor},
@@ -144,7 +153,7 @@ Lorem ipsum
 			\item[Integrity] If every correct process proposes the same $v$, then all correct processes decide $d_i = v$.
 		\end{description}
 
-		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result, can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message.\\
+		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.\\
 
 	\section{Challenges}
 
@@ -162,8 +171,56 @@ Lorem ipsum
 		\end{itemize}
 		
 	\section{Implementation}
-
 	In order to demonstrate that the proposed solution could work, we demonstrate the implementation of a monotonic counter in \cpp.
+
+	\subsection{Trusted monotonic counter example}
+	The implemented example is separated into two parts:
+	\begin{description}
+		\item [TMCtest] is the enclave code. It is able to seal and unseal data, so that it is protected from tampering outside the enclave. It can create, increment and read monotonic counters. Due to the nature of enclaves, it is not able to make any I/O calls, which is why it needs the untrusted part of the code for this.
+		\item [Untrusted] is the untrusted part of the code. It essentially acts as a wrapper for the enclave, in that it is responsible for all I/O calls. It is able to take and parse commands from the command-line and call the appropriate enclave function. It is also able to print and read enclave-sealed monotonic counters.  
+	\end{description}
+	The interface between TMCtest and Untrusted are specified by the EDL file \texttt{TMCtest.edl} (snippet \ref{snippet:tmctest.edl}). The EDL specifies which functions the untrusted code can call in the enclave (ECALLs), in the \texttt{trusted} block. 
+	It is also able to specify which functions the enclave can call in the untrusted code (OCALLs), in the \texttt{untrusted} block, but there are none of these present in the example:
+	\begin{snippet}[!ht]
+	\begin{lstlisting}[language=C++, numbers=none]
+enclave {
+	from "sgx_tae_service.edl" import *;
+    trusted {
+        /* define ECALLs here. */
+        public uint32_t create_sealed_monotonic_counter([out, size=sealed_mc_size]
+            uint8_t* sealed_mc_result, uint32_t sealed_mc_size );
+		public uint32_t increment_monotonic_counter([in,out, size=sealed_mc_size]
+            uint8_t* sealed_mc_result, uint32_t sealed_mc_size);
+		public uint32_t read_sealed_monotonic_counter([in,out, size=sealed_mc_size]
+            uint8_t* sealed_mc_result, uint32_t sealed_mc_size, [in, out] uint32_t* mc_value);
+		public uint32_t get_size();
+    };
+
+    untrusted {
+        /* define OCALLs here. */
+    };
+};
+	\end{lstlisting}
+	\caption{\texttt{TMCtest.edl}, the interface between the enclave and the untrusted code\label{snippet:tmctest.edl}}
+	\end{snippet}
+
+	The struct created for the monotonic counter data is called \texttt{monotonic\_counter} (snippet \ref{snippet:monotonic-counter}), and is only accessible for the enclave. It consists of the current monotonic counter value, as wells as a unique id for the monotonic counter, which SGX uses for accessing the appropriate non-volatile memory.
+	\begin{snippet}[!ht]
+		\begin{lstlisting}[language=C++]
+typedef struct _monotonic_counter
+{
+  sgx_mc_uuid_t mc;
+  uint32_t mc_value;
+}monotonic_counter;
+		\end{lstlisting}
+		\caption{monotonic\_counter struct in \texttt{TCMtest$.$cpp} \label{snippet:monotonic-counter}}
+	\end{snippet}
+
+	When creating an accessing monotonic counters, SGX needs to establish a session with the so-called Platform Services Enclave (PSE), which is a protected enclave, only accessible by other enclaves. The PSE provides access to protected functionality, such as monotonic counters, sealing and attestation.
+	After establishing this session, the creation of a monotonic counter is simply a call to \texttt{sgx\_create\_monotonic\_counter}.
+	When the monotonic counter has been created, the struct is sealed and passed to the untrusted code. Here it is important to notice that the memory containing the unsealed data must be cleared before returning the sealed data to the untrusted code, in order to prevent leaking data.
+
+	Incrementing a monotonic counter is very similar to creating it. Due to the fact that the untrusted code only has access to sealed structs, however, the passed data must first be unsealed. This is done very simply with a call to \texttt{sgx\_unseal\_data}. The data is also verified (i.e. that the value of the monotonic counter is as expected), to ensure that no tampering has taken place. The verification does not guarantee that another instance of the enclave has not unsealed the data and incremented the counter. However, it has to be another instance of the exact enclave, as the sealing process is encryption with a Seal Key, which is unique to the enclave and platform \cite{sgx-dev-guide}.
 
 	\section{Conclusion}
 
@@ -214,7 +271,7 @@ Lorem ipsum
 		\bibitem{miller2014anonymous},
 		Andrew Miller and Joseph J. LaViola, Jr.
   		\textit{Anonymous byzantine consensus from moderately-hard puzzles: A model for bitcoin},
-		\url{Available on line: http://nakamotoinstitute. org/research/anonymous-byzantine-consensus}
+		\url{Available on line: http://nakamotoinstitute.org/research/anonymous-byzantine-consensus}
 
 		\bibitem{consensus-survey}
 		Miguel Correia, Giuliana Santos Veronese, Nuno Ferreira Neves and Paulo Verissimo
@@ -222,7 +279,7 @@ Lorem ipsum
 
 		\bibitem{paxos}
 		Leslie Lamport
-		\textit{BThe Part-Time Parliament} 
+		\textit{The Part-Time Parliament} 
 
 		\bibitem{fast-byz-cons}
 		Jean-Philippe Martin and Lorenzo Alvisi
