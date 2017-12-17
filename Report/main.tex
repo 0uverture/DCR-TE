@@ -141,9 +141,16 @@ Lorem ipsum
 		\subsection{SGX}
 
 		Intel SGX is a technology which allows users to define protected areas of memory, so called enclaves, and run code within these enclaves.
-		Intel can then guarantee that any code run this way is unmolested by any process running outside of the enclave.
+		Intel guarantees that any code run this way is unmolested by any process running outside of the enclave.
+		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
+		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
 		An additional feature of Intel SGX is that the result of any code run using Intel SGX can be verified by other users, given the code and the output.
-		This is made possible through asymmetric encryption, with Intel as the key distributor.
+
+		This is all made possible by unique keys generated at manufacturing and stored inside the fuse array of the processor.
+		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
+		The only key which Intel allegedly do not possess is the key used for the sealing of enclaves, meaning that even Intel would theoretically not have access to sealed enclaves.
+
+		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level.
 		To ensure that keys are only distributed to trusted users, Intel offers Attestation Services (IAS) as a way of key distribution.
 
 			\subsubsection{Attestation}
