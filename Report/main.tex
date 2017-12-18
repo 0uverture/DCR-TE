@@ -62,12 +62,6 @@
 \maketitle
 \thispagestyle{empty}
 
-\vspace{\fill}
-
-\begin{abstract}
-Lorem ipsum
-\end{abstract}
-
 \pagebreak
 
 \tableofcontents
@@ -95,6 +89,10 @@ Lorem ipsum
 
 	An existing platform which partially solves this problem is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
 	It does however also feature a currency, making computations disproportionately expensive, and the large amounts of computations required by proof-of-work based blockchains.
+	Even though SGX is a new technology, it has already been proposed to solve several issues in the blockchain concept. 
+	SGX has been used as an intermediate for faster consensus about transactions in \cite{improv-btc}, however it still relies on the underlying blockchain to prevent double-spending.
+	In \cite{fastbft} and , SGX has been utilized to implement a new Byzantine Fault Tolerance (BFT) consensus algorithm, which solves some scalability issues for blockchains.
+	Hyperledger Sawtooth, is an ongoing blockchain project, which uses SGX to implement the so-called \textit{PoET} (Proof of Elapsed Time) consensus algorithm, which is an alternative to the original blockchain \textit{PoW} (Proof of Work) consensus algorithm.
 
 	\section{Background}
 
@@ -292,7 +290,7 @@ typedef struct _monotonic_counter
 		A few solutions for circumventing FLP-impossibility have been suggested, for instance using a probabilistic protocol, which achieves consensus except for some negligible probability. Most notable of these is perhaps the blockchain technology, (formal analyses of the complexity and probability of success can be found in \cite{miller2014anonymous}). However, the basis of a blockchain succeeding is an incentive for peers to use computing power to secure the system. This incentive takes the form of a currency \cite{bitcoin-white-paper}. While a clever solution, we are not interested in basing our system on a currency, thus subjecting the viability of the system on the rise-and-fall of the rate and popularity of the currency. Instead we have looked at alternatives for side-stepping FLP-impossibility. We have found the survey by Correia et al. \cite{consensus-survey} to be very helpful. The following are the solutions that we have identified to have the most potential for this system:
 		\begin{itemize}
 			\item One solution is to assume that some subsystem or step of the protocol behaves synchronously. This is known as \textit{partial synchrony}. If the system does not live up to these assumptions, the protocol will naturally fail. The challenge is this solution to identify a subsystem that can reliably be assumed to behave synchronously. 
-			\item A variation on \textit{partial synchrony} is to assume some subsystem has some "good" properties, which is otherwise not guaranteed in the environment. These subsystems are known as \textit{wormholes}. According to the survey \cite{consensus-survey}, the Trusted Platform Module (TPM) is an example of a wormhole, and since SGX can implement some of the same concepts as those available in TPM, it might be possible to use SGX as a wormhole. The survey mentions several protocols which might be transformed to solve the consensus problem, including one that uses a Unique Sequential Identifier Generator, which is essentially a monotonic counter. The challenge in this approach is to identify which of the properties in the wormhole allows side-stepping FLP impossibility, and then implementing them using SGX.
+			\item A variation on \textit{partial synchrony} is to assume some subsystem has some "good" properties, which is otherwise not guaranteed in the environment. These subsystems are known as \textit{wormholes}. According to the survey \cite{consensus-survey}, the Trusted Platform Module (TPM) is an example of a wormhole, and since SGX can implement some of the same concepts as those available in TPM, it might be possible to use SGX as a wormhole. The survey mentions several protocols which might be transformed to solve the consensus problem, including one that uses a Unique Sequential Identifier Generator, which is essentially a monotonic counter. Two examples of consensus algorithm based on SGX are FastBFT \cite{fastbft} and the PoET (Proof of Elapsed Time) algorithm \cite{poet}. The challenge in this approach is to identify which of the properties in the wormhole allows side-stepping FLP impossibility, and then implementing them using SGX.
 			\item The most simple way of side-stepping FLP impossibility, is simply to modify the consensus problem, i.e. weaken the requirements s.t. some failures are allowed. For instance, the PAXOS algorithm \cite{paxos} satisfy variations on the Agreement and Integrity requirements, but does not satisfy the appertaining Termination requirement \cite{fast-byz-cons}. The challenge in this approach is to identify which requirements can be most safely weakened, and how.
 		\end{itemize}
 		
@@ -359,7 +357,20 @@ typedef struct _monotonic_counter
 		Jean-Philippe Martin and Lorenzo Alvisi
 		\textit{Fast Byzantine Consensus}
 
+		\bibitem{improv-btc}
+		Rakesh Gopinath Nirmala
+		\textit{Improving the Security and Efficiency of Blockchain-based Cryptocurrencies, 2017-08-28}
+		\url{http://urn.fi/URN:NBN:fi:aalto-201709046818}
 
+		\bibitem{fastbft}
+		Jian Liu and Wenting Li and Ghassan O. Karame and N. Asokan
+ 		\textit{Scalable Byzantine Consensus via Hardware-assisted Secret Sharing, 2016}
+		\url{http://arxiv.org/abs/1612.04997}
+
+		\bibitem{poet}
+		Hyperledger
+		\textit{PoET: Proof of Elapsed Time}
+		\url{https://sawtooth.hyperledger.org/docs/core/releases/latest/introduction.html#proof-of-elapsed-time-poet}
 
 	\end{thebibliography}
 
