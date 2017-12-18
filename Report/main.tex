@@ -99,13 +99,11 @@
 	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
 
 		\subsection{Dynamic Condition Response}
-
 		A DCR graph is a representation of a workflow.
 		The graph is made up of one or more activities with a number of relations between them. 
 		The following section is loosely based on a similar description found in previous work\cite{dcreum}.
 
 		\subsubsection{Activity}
-
 		The activities in a DCR graph have three attributes: included, executed and pending. 
 		The attributes can be true or false. 
 		Furthermore an activity can have role and actor specific execution rights.
@@ -121,7 +119,6 @@
 		Executing an already executed activity will have no effect on the executed attribute.
 
 		\subsubsection{Relations}
-
 		There are five types of relations which define different types of relationships between activities in a workflow: \textit{condition}, \textit{response}, \textit{include}, \textit{exclude} and \textit{milestone}.
 		
 		If there is a \textit{condition} relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s executed attribute is true or $A$ is excluded.
@@ -433,6 +430,7 @@ typedef struct _monotonic_counter
 	    \bibitem{silent-bob}
 	    \textit{Silent Bob is Silent}.
 	    \url{https://embedi.com/wp-content/uploads/dlm_uploads/2017/11/silent-bob-is-silent.pdf}
+		Accessed 2017-12-18.
 	\end{thebibliography}
 
 \end{document}
