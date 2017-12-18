@@ -264,7 +264,7 @@ enclave {
 
 	The struct created for the monotonic counter data is called \texttt{monotonic\_counter} (snippet \ref{snippet:monotonic-counter}), and is only accessible for the enclave. It consists of the current monotonic counter value, as wells as a unique id for the monotonic counter, which SGX uses for accessing the appropriate non-volatile memory.
 	\begin{snippet}[!ht]
-		\begin{lstlisting}[language=C++]
+		\begin{lstlisting}[language=C++, numbers=none]
 typedef struct _monotonic_counter
 {
   sgx_mc_uuid_t mc;

@@ -168,9 +168,6 @@ uint32_t increment_monotonic_counter(uint8_t* sealed_mc_result, uint32_t sealed_
   int busy_retry_times = 2;
   monotonic_counter mc_unsealed;
   monotonic_counter mc2seal;
- /* if (sealed_log_size != sgx_calc_sealed_data_size(0,
-    sizeof(replay_protected_pay_load)))
-    return SGX_ERROR_INVALID_PARAMETER;*/
   do {
     ret = sgx_create_pse_session();
   } while (ret == SGX_ERROR_BUSY && busy_retry_times--);
