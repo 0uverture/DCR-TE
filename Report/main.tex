@@ -288,6 +288,7 @@ typedef struct _monotonic_counter
 	However, it has to be another instance of the exact enclave, as the sealing process is encryption with a Seal Key, which is unique to the enclave and platform \cite{sgx-dev-guide}.
 
 	\section{Challenges}
+	The primary challenges in this project are concerned with SGX and consensus.
 
 		\subsection{SGX security}
     All aforementioned hardware guarantees are given by Intel, but as very little of the proprietary technology is documented, all security properties of SGX rely on the correctness of Intel's hardware implementation.
