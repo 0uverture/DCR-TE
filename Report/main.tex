@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
@@ -11,7 +11,10 @@
 \usepackage{relsize}
 \usepackage{newfloat}
 
-% \linespread{1.5}
+\usepackage{times}
+\usepackage[margin=2cm]{geometry}
+
+\linespread{1.5}
 
 \definecolor{listinggray}{gray}{0.9}
 \definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
@@ -201,13 +204,7 @@ Lorem ipsum
 			A signed certificated from a recognized certificate authority needs to be obtained by the Independent Service Vendor (ISV).
 			The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
 
-			\begin{figure}[ht]
-				\includegraphics{figures/remote-attestation-flow.png}
-				\caption{Flow of remote attestation.}
-				\label{fig:remote-attestation}
-			\end{figure}
-
-			The specific details of the remote attestation is then up to the API exposed by the ISV, but is outlined in figure \ref{fig:remote-attestation}\footnote{Taken from \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
+			The specific details of the remote attestation is then up to the API exposed by the ISV, but is outlined in figure\footnote{Taken from \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
 			The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
 			The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
 			The extended GID is then checked for support and if it is, the ISV service responds with a success message.
