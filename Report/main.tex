@@ -140,18 +140,18 @@
 		% \end{description}
 
 		\subsection{SGX}
-		Intel SGX is a technology which allows users to define protected areas of memory, so called enclaves, and run code within these enclaves.
-		Intel guarantees that any code run this way is unmolested by any process running outside of the enclave.
+		Intel SGX is a technology which allows users to define protected areas of memory, so called \textit{enclaves}, and both run code and store data within these enclaves.
+		Intel guarantees \cite{sgx} that any code run this way is protected from access by any process running outside of the enclave. 
+		More specifically, the guarantees encompass Confidentiality, i.e. no other process can read the data in the enclave, and Integrity, i.e. no other process can modify the data in the enclave. 
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
 		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
 		An additional feature of Intel SGX is that the result of any code run using Intel SGX can be verified by other users, given the code and the output.
 
 		This is all made possible by unique keys generated at manufacturing and stored inside the fuse array of the processor.
 		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
-		The only key which Intel allegedly do not possess is the key used for the sealing of enclaves, meaning that even Intel would theoretically not have access to sealed enclaves.
+		The only key which Intel do not possess is the Seal Key \cite{intel-sgx-explained}, which is used for the sealing of enclaves, meaning that even Intel would theoretically not have access to sealed enclaves.
 
 		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level.
-		To ensure that keys are only distributed to trusted users, Intel offers Attestation Services (IAS) as a way of key distribution.
 
       \subsubsection{Enclave}
       What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
@@ -161,18 +161,19 @@
       \end{description}
       Using these hardware facilities SGX defines the concept of an enclave.
       An enclave is, as its name suggests, a software module isolated completely from the rest of the system.
-      Its memory is located solely in PRM, protecting it from tampering from other processes and enclaves running on the system.
-      % ...
-      % how?
+      Its memory is located solely in PRM, protecting it access by other processes and enclaves running on the system. 
+      The PRM is protected from non-enclave processes, as a product of the enclave mode. 
+      When a process is outside enclave mode and try to access the PRM, the access memory is simply bounced \cite{intel-sgx-explained}.
+      An enclave-process's PRM memory is protected from accesses by other processes in enclave-mode by the SGX Enclave Control Structure (SECS). 
+      The SECS holds meta-data about the enclave processes, and among this is a virtual-to-physical memory mapping called the Enclave Page Cache (EPC). 
+      Through the EPC, an enclave's access to physical PRM is reduced to what has been allocated for the enclave-process \cite{intel-sgx-explained}.
 
       While SGX provides powerful guarantees trough its enclave concept, it does not guarantee software correctness and will not protect against flawed software.
-      Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes.
-      % ref SDG
-      By minimizing the size of the TCB, and thus the amount of software one must trust, common security principles indicate that the chance of security flaws decreases.
-      % principle
-      % ref
+      Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes \cite{sgx-dev-guide}.
+      By minimizing the size of the TCB, and thus the amount of software one must trust, common security principles indicate that the chance of security flaws decreases \cite{sgx-dev-guide}.
+
       In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{ECALLs} and \textit{OCALLS}.
-      This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs.
+      This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs, in a so-called \textit{EDL}-file \cite{sgx-dev-guide}.
 
       % Signature
       When built, an enclave module is a plain binary on the untrusted file system.
@@ -184,17 +185,17 @@
         \item and an enclave version/product number.
       \end{itemize}
       During enclave initialization a hardware check is performed, ensuring the Enclave Signature matches the enclave binary loaded from the file system.
-      % ...
+      D
 
       % Sealing
       Another powerful tool of an SGX enclave is the ability to read and write data to an untrusted storage medium while ensuring confidentiality of its contents.
       Such capabilities are needed as the PRM is volatile and will not persist a shut down.
-      In SGX this process is known as \textit{sealing} and allows encryption and decryption confidential to either the Enclave Signature, allowing only the current enclave version access, or the Enclave Signature without the version number, allowing the current enclave version as well as future updates versions access.
+      In SGX this process is known as \textit{sealing}.
+      Sealing allows encryption and decryption using a so-called \textit{Seal Key}, which is confidential to either the Enclave Signature, allowing access only the current enclave version, or the Enclave Signature without the version number, allowing access to the current enclave version as well as future (and previous) versions.
       % encryption algos?
       % distinguising between running enclave instances
 
 			\subsubsection{Attestation}
-
 			Attestation, within the Intel SGX platform, is the action of verifying the existence of specific enclaves.
 			The applications of this are two-fold, in the case where enclaves need to communicate to enclaves running on external CPUs and in the case where there are multiple enclaves running locally on the same CPU.
 			These two situations are handled by two different processes, aptly named remote attestation and local attestation, respectively.
@@ -202,7 +203,7 @@
 			A signed certificated from a recognized certificate authority needs to be obtained by the Independent Service Vendor (ISV).
 			The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
 
-			The specific details of the remote attestation is then up to the API exposed by the ISV, but is outlined in figure\footnote{Taken from \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
+			The specific details of the remote attestation is then up to the API exposed by the ISV \footnote{Outlined here: \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
 			The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
 			The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
 			The extended GID is then checked for support and if it is, the ISV service responds with a success message.
@@ -326,6 +327,10 @@ typedef struct _monotonic_counter
 		\bibitem{dcreum}
 		Mikkel Gaub, Tróndur Høgnason, Malthe Ettrup Kirkbro \& Mads Frederik Madsen.
 		\textit{Consensus in declarative process models using distributed smart-contracts}.
+
+		\bibitem{sgx}		
+		\textit{Intel® Software Guard Extensions}.
+		\url{https://software.intel.com/en-us/sgx}
 
 		\bibitem{sgx-dev-ref}		
 		\textit{Intel® Software Guard Extensions SDK for Linux OS}.
