@@ -78,7 +78,7 @@
 
 		\subsection{Goals}
 
-		During this project we will investigate whether or not it is possible to create a secure implementation of a Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
+		During this project we will investigate whether or not it is possible to create a secure implementation of a distributed Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
 		It will be split into two phases:
 		\begin{enumerate}
 			\item The first phase, which is described in its entirety in this report, is an investigation into the feasibility and usability of Intel SGX in conjunction with distributed DCR graphs.
@@ -149,7 +149,6 @@
 
 		This is all made possible by unique keys generated at manufacturing and stored inside the fuse array of the processor.
 		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
-		The only key which Intel do not possess is the Seal Key \cite{intel-sgx-explained}, which is used for the sealing of enclaves, meaning that even Intel would theoretically not have access to sealed enclaves.
 
 		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level.
 
@@ -203,7 +202,7 @@
 			A signed certificated from a recognized certificate authority needs to be obtained by the Independent Service Vendor (ISV).
 			The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
 
-			The specific details of the remote attestation is then up to the API exposed by the ISV \footnote{Outlined here: \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
+			The specific details of the remote attestation is then up to the API exposed by the ISV, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
 			The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
 			The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
 			The extended GID is then checked for support and if it is, the ISV service responds with a success message.
@@ -296,6 +295,15 @@ typedef struct _monotonic_counter
 		\end{itemize}
 		
 	\section{Future Work}
+
+	After the research demonstrated in this paper, it should now be apparent that the proposed project is reasonable.
+	An example of the implementation of a monotonic counter has been shown to function, and the considerations and challenges regarding Intel SGX have been explored.
+	Exactly how the advantages given by Intel SGX can be leveraged to create distributed consensus, more efficiently or to a greater degree than a typical distributed systems, is still unclear.
+	As Intel SGX is still rather new technology, attaining a greater understanding of it is challenging, given the few in-depth descriptions in existence.
+
+	For the second part of this project, the research described in this paper will be applied in the design of an algorithm to perform decentralized code executions using Intel SGX.
+	This algorithm will then be expanded to the development of a decentralized DCR-engine.
+	If this does not expend the available resources, the implementation of the DCR engine will be expanded to a platform for running arbitrary code decentralized.
 
 	\begin{thebibliography}{9}
 
