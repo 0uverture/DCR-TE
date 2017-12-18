@@ -290,8 +290,27 @@ typedef struct _monotonic_counter
 	\section{Challenges}
 
 		\subsection{SGX security}
+    All aforementioned hardware guarantees are given by Intel, but as very little of the proprietary technology is documented, all security properties of SGX rely on the correctness of Intel's hardware implementation.
+    Historically Intel has had vulnerabilities in similar hardware components, like the CVE-2017-5689 security incident exposed in \cite{silent-bob}, allowed unprivileged access to the Intel Active Management Technology.
+    However, to the authors knowledge, no publicly known vulnerabilities ... exist.
+    % confidentiality vulns. exist - what kind doesnt? -------------------^
+    % the authors -> our?
+    % move to end of section?
 
-		Due to SGX being a security guarantee made by Intel all work involving it, the proposed project requires absolute trust in Intel keeping private keys secure and them not violating the confidentiality of machines with their hardware.
+    SGX claims to provide confidentiality and integrity for running enclaves.
+    This is ensured by preventing untrusted software access to the PRM and enclaves access to other regions of the PRM besides their exclusive region.
+    However, while it is not possible to breach the integrity of PRM, \cite{intel-sgx-explained} shows several issues regarding confidentiality.
+    Because enclaves use the system page table even for data residing on PRM, it is possible for untrusted software to learn the page access order by manipulating the OS controlled page table.
+    Another possible attack vector is to perform cache timing by cleverly choosing the physical memory position of enclave memory pages on set associative caches.
+    By mapping snooping software to the same cache set as the enclave, the snooping software can evict the enclave's memory from the cache and use timing to figure out if it is accessed again.
+    Lastly, processors with hyper threading support are vulnerable to instruction snooping, as a snooping process sharing physical core with an enclave can use performance counters to determine which instructions the out-of-order scheduler is able to run in parallel with the enclave.
+    The presence of these attacks means that enclaves using data-dependent memory access will likely not ensure confidentiality.
+
+    As mentioned SGX does not protect against flawed software, so it is up to the developer to prevent side-channel attacks through OCALLs that might expose secret data.
+    A noteworthy mention to illustrate the vigor needed is the common pitfall mentioned in \cite{sgx-dev-guide} when using ECALLs and OCALLs.
+    Because enclaves are compiled using a standard \cpp compiler, structure padding is likely to happen.
+    The SGX environment does not protect against leaking secret information through uninitialized structure padding when passing structures in ECALLs and OCALLs - this, and other common security pitfalls, are not part of any SGX security guarantees.
+    Intel recommends to always clear secrets from the enclave memory after use in \cite{sgx-dev-guide}, regardless of the guarantees given by the PRM, underlining the risk of unintended vulnerabilities.
 
 		\subsection{Consensus}
 		Given that our problem deals with agreeing on a history of a workflow, we must somehow circumvent FLP impossibility.
@@ -417,6 +436,9 @@ typedef struct _monotonic_counter
 		\url{https://sawtooth.hyperledger.org/docs/core/releases/latest/introduction.html#proof-of-elapsed-time-poet}
 		Accessed 2017-12-18.
 
+    \bibitem{silent-bob}
+    \textit{Silent Bob is Silent}.
+    \url{https://embedi.com/wp-content/uploads/dlm_uploads/2017/11/silent-bob-is-silent.pdf}
 	\end{thebibliography}
 
 \end{document}
