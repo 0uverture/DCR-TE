@@ -159,7 +159,7 @@
       Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes \cite{sgx-dev-guide}.
       By minimizing the size of the TCB, and thus the amount of software one must trust, common security principles indicate that the chance of security flaws decreases \cite{sgx-dev-guide}.
 
-      In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{ECALLs} and \textit{OCALLS}.
+      In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{enclave calls} (ECALL) and \textit{out calls} (OCALL).
       This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs, in a so-called \textit{EDL}-file \cite{sgx-dev-guide}.
 
       % Signature
