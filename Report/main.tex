@@ -98,46 +98,37 @@
 
 	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
 
-		% \subsection{Dynamic Condition Response}
+		\subsection{Dynamic Condition Response}
 
-		% A DCR graph is a representation of a workflow.
-		% The graph is made up of one or more activities with a number of relations between them. 
-		% The following section is loosely based on a similar description found in previous work\cite{dcreum}.
+		A DCR graph is a representation of a workflow.
+		The graph is made up of one or more activities with a number of relations between them. 
+		The following section is loosely based on a similar description found in previous work\cite{dcreum}.
 
-		% \subsubsection{Activity}
+		\subsubsection{Activity}
 
-		% The activities in a DCR graph have three attributes: included, executed and pending. 
-		% The attributes can be true or false. 
-		% Furthermore an activity can have role and actor specific execution rights.
+		The activities in a DCR graph have three attributes: included, executed and pending. 
+		The attributes can be true or false. 
+		Furthermore an activity can have role and actor specific execution rights.
 
-		% 	\paragraph{Included attribute}
+		If the include attribute of an activity is true, the activity is included and it can be executed. 
+		If the attribute is false, the activity is excluded and can no longer be executed.
 
-		% 	If the include attribute of an activity is true, the activity is included and it can be executed. 
-		% 	If the attribute is false, the activity is excluded and can no longer be executed.
+		If any activity in a workflow has a pending attribute that is true and the activity is included, the workflow is in an unfinished state.
+		Every time an activity is executed its pending attribute is set to false.
+		This means that setting the pending attribute of an included activity to true is specifying that this activity must be executed or excluded at some point to leave the workflow in a finished state.
 
-		% 	\paragraph{Pending attribute}
+		If an activities executed attribute is false executing the activity will set its executed attribute to true.
+		Executing an already executed activity will have no effect on the executed attribute.
 
-		% 	If any activity in a workflow has a pending attribute that is true and the activity is included, the workflow is in an unfinished state.
-		% 	Every time an activity is executed its pending attribute is set to false.
-		% 	This means that setting the pending attribute of an included activity to true is specifying that this activity must be executed or excluded at some point to leave the workflow in a finished state.
+		\subsubsection{Relations}
 
-		% 	\paragraph{Executed attribute}
-
-		% 	If an activities executed attribute is false executing the activity will set its executed attribute to true.
-		% 	Executing an already executed activity will have no effect on the executed attribute.
-
-		% \subsubsection{Relations}
-
-		% There are five types of relations which define different types of relationships between activities in a workflow. 
-		% These relations are:
-
-		% \begin{description}
-		% 	\item[Condition] If there is a condition relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s executed attribute is true or $A$ is excluded.
-		% 	\item[Response] If there is a response relation from activity $A$ to activity $B$, then $B$'s pending attribute will be set to true every time $A$ is executed.
-		% 	\item[Include] If there is an include relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to true every time $A$ is executed.
-		% 	\item[Exclude] If there is an exclude relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to false every time $A$ is executed.
-		% 	\item[Milestone] If there is a milestone relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s pending attribute is false or $A$'s included attribute is false.
-		% \end{description}
+		There are five types of relations which define different types of relationships between activities in a workflow: \textit{condition}, \textit{response}, \textit{include}, \textit{exclude} and \textit{milestone}.
+		
+		If there is a \textit{condition} relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s executed attribute is true or $A$ is excluded.
+		If there is a \textit{response} relation from activity $A$ to activity $B$, then $B$'s pending attribute will be set to true every time $A$ is executed.
+		If there is an \textit{include} relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to true every time $A$ is executed.
+		If there is an \textit{exclude} relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to false every time $A$ is executed.
+		If there is a \textit{milestone} relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s pending attribute is false or $A$'s included attribute is false.		
 
 		\subsection{SGX}
 		Intel SGX is a technology which allows users to define protected areas of memory, so called \textit{enclaves}, and both run code and store data within these enclaves.
@@ -226,7 +217,7 @@
 
 		In relation to this project, this is one of the issues which needs to be solved, for the proposed solution to work and will likely be the part where Intel SGX is the most applicable.
 
-		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.\\
+		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.
 
 	\section{Implementation}
 	In order to demonstrate that the proposed solution could work, we demonstrate the implementation of a monotonic counter in \cpp.
@@ -239,6 +230,8 @@
 	\end{description}
 	The interface between TMCtest and Untrusted are specified by the EDL file \texttt{TMCtest.edl} (snippet \ref{snippet:tmctest.edl}). The EDL specifies which functions the untrusted code can call in the enclave (ECALLs), in the \texttt{trusted} block. 
 	It is also able to specify which functions the enclave can call in the untrusted code (OCALLs), in the \texttt{untrusted} block, but there are none of these present in the example:
+
+	\vspace{-1cm}
 	\begin{snippet}[!ht]
 	\begin{lstlisting}[language=C++, numbers=none]
 enclave {
@@ -263,6 +256,8 @@ enclave {
 	\end{snippet}
 
 	The struct created for the monotonic counter data is called \texttt{monotonic\_counter} (snippet \ref{snippet:monotonic-counter}), and is only accessible by the enclave. It consists of the current monotonic counter value, as wells as the unique id of the monotonic counter, which SGX uses for accessing the appropriate non-volatile memory.
+
+	\vspace{-1cm}
 	\begin{snippet}[!ht]
 		\begin{lstlisting}[language=C++, numbers=none]
 typedef struct _monotonic_counter
@@ -291,6 +286,7 @@ typedef struct _monotonic_counter
 	The primary challenges in this project are concerned with SGX and consensus.
 
 		\subsection{SGX security}
+<<<<<<< Updated upstream
     All aforementioned hardware guarantees are given by Intel, but as very little of the proprietary technology is documented, all security properties of SGX rely on the correctness of Intel's hardware implementation.
     Historically Intel has had vulnerabilities in similar hardware components, like the CVE-2017-5689 security incident exposed in \cite{silent-bob}, allowed unprivileged access to the Intel Active Management Technology.
 
@@ -310,6 +306,29 @@ typedef struct _monotonic_counter
     Because enclaves are compiled using a standard \cpp compiler, structure padding is likely to happen.
     The SGX environment does not protect against leaking secret information through uninitialized structure padding when passing structures in ECALLs and OCALLs - this, and other common security pitfalls, are not part of any SGX security guarantees.
     Intel recommends to always clear secrets from the enclave memory after use in \cite{sgx-dev-guide}, regardless of the guarantees given by the PRM, underlining the risk of unintended vulnerabilities.
+=======
+	    All aforementioned hardware guarantees are given by Intel, but as very little of the proprietary technology is documented, all security properties of SGX rely on the correctness of Intel's hardware implementation.
+	    Historically Intel has had vulnerabilities in similar hardware components, like the CVE-2017-5689 security incident exposed in \cite{silent-bob}, allowed unprivileged access to the Intel Active Management Technology.
+	    However, to the authors knowledge, no publicly known vulnerabilities ... exist.
+	    % confidentiality vulns. exist - what kind doesnt? -------------------^
+	    % the authors -> our?
+	    % move to end of section?
+
+	    SGX claims to provide confidentiality and integrity for running enclaves.
+	    This is ensured by preventing untrusted software access to the PRM and enclaves access to other regions of the PRM besides their exclusive region.
+	    However, while it is not possible to breach the integrity of PRM, \cite{intel-sgx-explained} shows several issues regarding confidentiality.
+	    Because enclaves use the system page table even for data residing on PRM, it is possible for untrusted software to learn the page access order by manipulating the OS controlled page table.
+	    Another possible attack vector is to perform cache timing by cleverly choosing the physical memory position of enclave memory pages on set associative caches.
+	    By mapping snooping software to the same cache set as the enclave, the snooping software can evict the enclave's memory from the cache and use timing to figure out if it is accessed again.
+	    Lastly, processors with hyper threading support are vulnerable to instruction snooping, as a snooping process sharing physical core with an enclave can use performance counters to determine which instructions the out-of-order scheduler is able to run in parallel with the enclave.
+	    The presence of these attacks means that enclaves using data-dependent memory access will likely not ensure confidentiality.
+
+	    As mentioned SGX does not protect against flawed software, so it is up to the developer to prevent side-channel attacks through OCALLs that might expose secret data.
+	    A noteworthy mention to illustrate the vigor needed is the common pitfall mentioned in \cite{sgx-dev-guide} when using ECALLs and OCALLs.
+	    Because enclaves are compiled using a standard \cpp compiler, structure padding is likely to happen.
+	    The SGX environment does not protect against leaking secret information through uninitialized structure padding when passing structures in ECALLs and OCALLs - this, and other common security pitfalls, are not part of any SGX security guarantees.
+	    Intel recommends to always clear secrets from the enclave memory after use in \cite{sgx-dev-guide}, regardless of the guarantees given by the PRM, underlining the risk of unintended vulnerabilities.
+>>>>>>> Stashed changes
 
 		\subsection{Consensus}
 		Given that our problem deals with agreeing on a history of a workflow, we must somehow circumvent FLP impossibility.
@@ -320,20 +339,21 @@ typedef struct _monotonic_counter
 		While a clever solution, we are not interested in basing our system on a currency, thus subjecting the viability of the system on the rise-and-fall of the rate and popularity of the currency. 
 		Instead we have looked at alternatives for side-stepping FLP-impossibility. 
 		We have found the survey by Correia et al. \cite{consensus-survey} to be very helpful. 
-		The following are the solutions that we have identified to have the most potential for this system:
-		\begin{itemize}
-			\item One solution is to assume that some subsystem or step of the protocol behaves synchronously. 
-			This is known as \textit{partial synchrony}. 
-			If the system does not live up to these assumptions, the protocol will naturally fail. 
-			The challenge is this solution to identify a subsystem that can reliably be assumed to behave synchronously. 
-			\item A variation on \textit{partial synchrony} is to assume some subsystem has some trusted properties, which are otherwise not guaranteed in the environment. These subsystems are known as \textit{wormholes}. 
-			According to the survey \cite{consensus-survey}, the Trusted Platform Module (TPM) is an example of a wormhole, and since SGX can implement some of the same concepts as those available in TPM, it might be possible to use SGX as a wormhole. 
-			The survey mentions several protocols which might be transformed to solve the consensus problem, including one that uses a Unique Sequential Identifier Generator, which is essentially a monotonic counter, similar to the consensus algorithms applied through FastBFT and PoET. 
-			The challenge in this approach is to identify which of the properties in the wormhole allow side-stepping FLP impossibility, and then implementing them using SGX.
-			\item The most simple way of side-stepping FLP impossibility, is simply to modify the consensus problem, i.e. weaken the requirements s.t. some failures are allowed. 
-			For instance, the PAXOS algorithm \cite{paxos} satisfy variations on the Agreement and Integrity requirements, but does not satisfy the appertaining Termination requirement \cite{fast-byz-cons}. 
-			The challenge in this approach is to identify which requirements can be most safely weakened, and how.
-		\end{itemize}
+		We have the following three options:
+
+		One solution is to assume that some subsystem or step of the protocol behaves synchronously. 
+		This is known as \textit{partial synchrony}. 
+		If the system does not live up to these assumptions, the protocol will naturally fail. 
+		The challenge is this solution to identify a subsystem that can reliably be assumed to behave synchronously. 
+
+		A variation on \textit{partial synchrony} is to assume some subsystem has some trusted properties, which are otherwise not guaranteed in the environment. These subsystems are known as \textit{wormholes}. 
+		According to the survey \cite{consensus-survey}, the Trusted Platform Module (TPM) is an example of a wormhole, and since SGX can implement some of the same concepts as those available in TPM, it might be possible to use SGX as a wormhole. 
+		The survey mentions several protocols which might be transformed to solve the consensus problem, including one that uses a Unique Sequential Identifier Generator, which is essentially a monotonic counter, similar to the consensus algorithms applied through FastBFT and PoET. 
+		The challenge in this approach is to identify which of the properties in the wormhole allow side-stepping FLP impossibility, and then implementing them using SGX.
+
+		The most simple way of side-stepping FLP impossibility, is simply to modify the consensus problem, i.e. weaken the requirements s.t. some failures are allowed. 
+		For instance, the PAXOS algorithm \cite{paxos} satisfy variations on the Agreement and Integrity requirements, but does not satisfy the appertaining Termination requirement \cite{fast-byz-cons}. 
+		The challenge in this approach is to identify which requirements can be most safely weakened, and how.
 		
 	\section{Future Work}
 	After the research demonstrated in this paper, it should now be apparent that the proposed project is reasonable.
