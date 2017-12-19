@@ -210,9 +210,14 @@
 			This is done through a Diffie-Hellmann Key Exchange utilizing the report key\footnote{This exchange is described in more detail here \url{https://software.intel.com/en-us/node/709011}.}.
 			Further communication between these enclaves can be sent through a protected channel.
 
+			\subsubsection{Monotonic counters}
+			One of the (for this project) key functions that SGX provides, is the access to \textit{trusted monotonic counters}.
+			As indicated by the name, monotonic counters are integer counters, that can only be incremented.
+			
+
 		\subsection{Consensus}
 		One of the goals is to establish agreement in a history of a workflow, see section \ref{subsec:problem}. Agreement on this history implies a solution to \textit{consensus}, see \cite{mds-book}, for formal definition.
-		Solving consensus will likely be the part where Intel SGX is the most applicable, suggested by the consensus solutions in fatBFT \cite{fastbft} and PoET \cite{poet}
+		Solving consensus will likely be the part where Intel SGX is the most applicable, suggested by the consensus solutions in fastBFT \cite{fastbft} and PoET \cite{poet}
 
 		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.
 
