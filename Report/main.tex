@@ -100,8 +100,8 @@
 	SGX has been used as an intermediate for faster consensus about transactions in \cite{improv-btc}, however it still relies on the underlying blockchain to prevent double-spending.
 
 	In \cite{fastbft} SGX has been utilized to implement a new Byzantine fault tolerance (BFT) consensus algorithm, called \textit{FastBFT}, which solves some of the scalability issues of blockchains.
-	This is done by using the so-called \textit{strawman design} where a request is sent to a node, the primary, who prepares a vote, by distributing parts of a secret to all nodes.
-	The secret can be reconstructed given enough parts and then compared to the hash of the secret, which is common knowledge.
+	This is done by using the so-called \textit{strawman design} where a request is sent to a node, the \textit{primary}, who prepares a vote by distributing parts of a secret to all nodes.
+	The secret can be reconstructed given enough parts and then compared to the hash of the secret which is common knowledge.
 	This means that consensus can be achieved in only $O(n)$ messages, rather than $O(n^2)$ messages, which other algorithms have achieved.
 	The reason that Intel SGX is needed for this algorithm is that the primary, who distributes the secrets, can fake being any node as he has all parts of the secret.
 	Trusted Execution Environments (TEE) as introduced by Intel SGX, means that these secrets can be computed and distributed without the primary every having access to them.
