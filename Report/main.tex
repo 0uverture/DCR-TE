@@ -189,9 +189,10 @@
 			Further communication between these enclaves can be sent through a protected channel.
 
 			\subsubsection{Monotonic counters}
-			One of the (for this project) key functions that SGX provides, is the access to \textit{trusted monotonic counters}.
+			One of the functions provided by Intel SGX which is especially relevant for this project, is the access to \textit{trusted monotonic counters}.
 			As indicated by the name, monotonic counters are integer counters, that can only be incremented.
-			
+			These counters run inside enclaves, hence the \textit{trusted} part of its name, and are sealed after incrementation, preventing access from unauthorized programs.
+			Monotonic counters were originally implemented in order to safeguard against rollback attacks, but given their strong guarantees they could possibly be used as part of a consensus algorithm for the project described in this paper.
 
 		\subsection{Consensus}
 		One of the goals is to establish agreement in a history of a workflow, see section \ref{subsec:problem}. Agreement on this history implies a solution to \textit{consensus}, see \cite{mds-book}, for formal definition.
