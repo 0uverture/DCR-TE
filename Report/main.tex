@@ -124,7 +124,7 @@
 		\subsection{SGX}
 		Intel SGX is a technology which allows users to define protected areas of memory, so called \textit{enclaves}, and both run code and store data within these enclaves.
 		Intel guarantees \cite{sgx} that any code run this way is protected from access by any process running outside of the enclave. 
-		More specifically, the guarantees encompass Confidentiality, i.e. no other process can read the data in the enclave, and Integrity, i.e. no other process can modify the data in the enclave. 
+		More specifically, the guarantees encompass \textit{confidentiality}, i.e. no other process can read the data in the enclave, and \textit{integrity}, i.e. no other process can modify the data in the enclave. 
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
 		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
 		An additional feature of Intel SGX is that the result of any code run using Intel SGX can be verified by other users, given the code and the output.
@@ -137,8 +137,8 @@
       \subsubsection{Enclave}
       What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
       \begin{description}
-        \item [Processor Reserved Memory (PRM)]: a sequential block of memory reserved for SGX inaccessible from untrusted software and even hardware.
-        \item [Enclave mode]: a mode under which a logical processor gains access to the PRM, allowing trusted software exclusive access to its own memory.
+        \item [Processor Reserved Memory (PRM)] is a sequential block of memory reserved for SGX inaccessible from untrusted software and even hardware.
+        \item [Enclave mode] is a mode under which a logical processor gains access to the PRM, allowing trusted software exclusive access to its own memory.
       \end{description}
       Using these hardware facilities SGX defines the concept of an enclave.
       An enclave is, as its name suggests, a software module isolated completely from the rest of the system.
@@ -180,10 +180,10 @@
 			The applications of this are two-fold, in the case where enclaves need to communicate to enclaves running on external CPUs and in the case where there are multiple enclaves running locally on the same CPU.
 			These two situations are handled by two different processes, aptly named remote attestation and local attestation, respectively.
 			In the former case of remote attestation, there is a considerable amount of setup needed to be done once, beforehand.
-			A signed certificated from a recognized certificate authority needs to be obtained by the Independent Service Vendor (ISV).
+			A signed certificated from a recognized certificate authority needs to be obtained by the application author.
 			The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
 
-			The specific details of the remote attestation is then up to the API exposed by the ISV, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
+			The specific details of the remote attestation is then up to the API exposed by the application author, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
 			The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
 			The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
 			The extended GID is then checked for support and if it is, the ISV service responds with a success message.
