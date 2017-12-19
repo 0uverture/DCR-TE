@@ -76,9 +76,15 @@
 	Most solutions to this are, however, cumbersome in that they require a very large amount of data to be transmitted.
 	As the new innovation applied in this project is Intel SGX, it will be investigate what sort of advantages it grants in the implementation of a distributed network.
 
-		\subsection{Goals}
+		\subsection{Problem}
 
 		During this project we will investigate whether or not it is possible to create a secure implementation of a distributed Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
+
+		We define this distributed SGX-DCR engine informally as a system where all non-malicious users agree on each state a given workflow has been in.
+		As the majority of the challenge of the previous statement is making the proposed system distributed, the strong guarantees provided by Intel SGX will be applied in order to achieve consensus among the participating parties.
+
+		\subsection{Plan}
+
 		It will be split into two phases:
 		\begin{enumerate}
 			\item The first phase, which is described in its entirety in this report, is an investigation into the feasibility and usability of Intel SGX in conjunction with distributed DCR graphs.
@@ -87,7 +93,7 @@
 
 	\section{Related works}
 
-	An existing platform which partially solves this problem is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
+	An existing platform which partially provides a solution to the goal of this project is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
 	It does however also feature a currency, making computations disproportionately expensive, both monetarily and computationally due to the large amounts of computations required by proof-of-work based blockchains.
 	Even though SGX is a new technology, it has already been proposed to solve several issues in the blockchain concept. 
 	SGX has been used as an intermediate for faster consensus about transactions in \cite{improv-btc}, however it still relies on the underlying blockchain to prevent double-spending.
