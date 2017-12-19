@@ -99,40 +99,18 @@
 	Even though SGX is a new technology, it has already been proposed to solve several issues in the blockchain concept. 
 	SGX has been used as an intermediate for faster consensus about transactions in \cite{improv-btc}, however it still relies on the underlying blockchain to prevent double-spending.
 	In \cite{fastbft} SGX has been utilized to implement a new Byzantine fault tolerance (BFT) consensus algorithm, which solves some of the scalability issues of blockchains.
-	Hyperledger Sawtooth \cite{poet}, is an ongoing blockchain project, which uses SGX to implement the so-called Proof of Elapsed Time (PoET) consensus algorithm, which is an alternative to the original blockchain Proof of Work (PoW) consensus algorithm.
+	In particular, the Hyperledger Sawtooth \cite{poet} project is interesting as it is very closely related to the goals of our project.
+	Hyperledger Sawtooth, is an ongoing blockchain project, which replaces the need for mining by using a consensus algorithm called Proof of Elapsed Time (PoET).
+	In PoET a number of nodes who choose to participate as validators each create a timer using Intel SGX.
+	This timer is different per validator and contains a timestamp some time in the future, with a degree of randomness.
+	A validator can also check that a timer is valid, using Intel SGX, and also whether or not that timer has expired.
+	The first validator to distribute a valid and expired timer to the rest of the validators, is elected leader for the current round of decision-making.	
+	This is a strong indicator that Intel SGX can be used for efficiently attaining consensus.
 
 	\section{Background}
 
 	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
-
-		\subsection{Dynamic Condition Response}
-		A DCR graph is a representation of a workflow.
-		The graph is made up of one or more activities with a number of relations between them. 
-		The following section is loosely based on a similar description found in previous work\cite{dcreum}.
-
-		\subsubsection{Activity}
-		The activities in a DCR graph have three attributes: included, executed and pending. 
-		The attributes can be true or false. 
-		Furthermore an activity can have role and actor specific execution rights.
-
-		If the include attribute of an activity is true, the activity is included and it can be executed. 
-		If the attribute is false, the activity is excluded and can no longer be executed.
-
-		If any activity in a workflow has a pending attribute that is true and the activity is included, the workflow is in an unfinished state.
-		Every time an activity is executed its pending attribute is set to false.
-		This means that setting the pending attribute of an included activity to true is specifying that this activity must be executed or excluded at some point to leave the workflow in a finished state.
-
-		If an activities executed attribute is false executing the activity will set its executed attribute to true.
-		Executing an already executed activity will have no effect on the executed attribute.
-
-		\subsubsection{Relations}
-		There are five types of relations which define different types of relationships between activities in a workflow: \textit{condition}, \textit{response}, \textit{include}, \textit{exclude} and \textit{milestone}.
-		
-		If there is a \textit{condition} relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s executed attribute is true or $A$ is excluded.
-		If there is a \textit{response} relation from activity $A$ to activity $B$, then $B$'s pending attribute will be set to true every time $A$ is executed.
-		If there is an \textit{include} relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to true every time $A$ is executed.
-		If there is an \textit{exclude} relation from activity $A$ to activity $B$, then $B$'s included attribute will be set to false every time $A$ is executed.
-		If there is a \textit{milestone} relation from activity $A$ to activity $B$, then $B$ can only be executed if $A$'s pending attribute is false or $A$'s included attribute is false.		
+	We assume the user has some familiarity with DCR graphs and therefore it will not be described in this paper.	
 
 		\subsection{SGX}
 		Intel SGX is a technology which allows users to define protected areas of memory, so called \textit{enclaves}, and both run code and store data within these enclaves.
