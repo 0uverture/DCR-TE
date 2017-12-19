@@ -54,7 +54,7 @@
 }
 
 \author{Mikkel Gaub, Malthe Ettrup Kirkbro \& Mads Frederik Madsen}
-\title{Thesis Agreement}
+\title{Distributed Dynamic Condition Response Graphs in a Trusted Execution Environment \\ \large{Preliminaries}}
 \date{\today}
 
 \begin{document}
@@ -71,22 +71,21 @@
 	\section{Introduction}
 
 	In an increasingly digital business world, collaboration between companies is an everyday occurrence.
-	An intuitive way to model such a collaboration, is by using workflow, which will be the basis of this article.
+	An intuitive way to model such a collaboration, is by using workflows, which will be the basis of this report.
 	Performing collaborative work on a workflow between multiple, possibly untrusted, parties is mostly the same challenge as is posed in any distributed network. 
 	Most solutions to this are, however, cumbersome in that they require a very large amount of data to be transmitted.
-	As the new innovation applied in this project is Intel SGX, it will be investigate what sort of advantages it grants in the implementation of a distributed network.
+	The new innovation applied in this project is Intel SGX and as such it will be investigated what sort of advantages SGX grants in the implementation of a distributed network.
 
 		\subsection{Problem}
 		\label{subsec:problem}
 
-		During this project we will investigate whether or not it is possible to create a secure implementation of a distributed Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
-
-		We define this distributed SGX-DCR engine informally as a system where all non-malicious users agree on each state a given workflow has been in.
+		During this project we will investigate whether or not it is possible to create a secure implementation of a distributed Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX). 
+		We define this distributed SGX-DCR engine informally as a system where all correct processes agree on each state a given workflow has been in.
 		As the majority of the challenge of the previous statement is making the proposed system distributed, the strong guarantees provided by Intel SGX will be investigated for application in order to achieve consensus among the participating parties.
 
 		\subsection{Plan}
 
-		It will be split into two phases:
+		The project will be split into two phases:
 		\begin{enumerate}
 			\item The first phase, which is described in its entirety in this report, is an investigation into the feasibility and usability of Intel SGX in conjunction with distributed DCR graphs.
 			\item The second phase, will be the design and implementation of the DCR-SGX system along with a more in-depth foray into Intel SGX and its capabilities. Should this prove more easily attainable than it is currently believed to be, the implementation will be expanded to include generic applications, creating a distributed network of smart contracts\cite{smart-contracts}.
@@ -94,22 +93,22 @@
 
 	\section{Related works}
 
-	An existing platform which partially provides a solution to the goal of this project is Ethereum\cite{ethereum-white-paper}, which is a distributed computing platform based on blockchain technologies.
-	It does however also feature a currency, making computations disproportionately expensive, both monetarily and computationally due to the large amounts of computations required by proof-of-work based blockchains.
+	An existing platform which partially provides a solution to the goal of this project is Ethereum\cite{ethereum-white-paper}.
+	Ethereum is a distributed computing platform based on blockchain technologies, which does, however, also feature a currency, making computations disproportionately expensive, both monetarily and computationally due to the large amounts of computations required by proof-of-work based blockchains.
 	Even though SGX is a new technology, it has already been proposed to solve several issues in the blockchain concept. 
 	SGX has been used as an intermediate for faster consensus about transactions in \cite{improv-btc}, however it still relies on the underlying blockchain to prevent double-spending.
 
 	In \cite{fastbft} SGX has been utilized to implement a new Byzantine fault tolerance (BFT) consensus algorithm, called \textit{FastBFT}, which solves some of the scalability issues of blockchains.
-	This is done by using the so-called \textit{strawman design} where a request is sent to a node, the \textit{primary}, who prepares a vote by distributing parts of a secret to all nodes.
+	This is done by using the \textit{strawman design} where a request is sent to a node, the \textit{primary}, who prepares a vote by distributing parts of a secret to all nodes.
 	The secret can be reconstructed given enough parts and then compared to the hash of the secret which is common knowledge.
-	This means that consensus can be achieved in only $O(n)$ messages, rather than $O(n^2)$ messages, which other algorithms have achieved.
+	This means that consensus can be achieved in only $O(n)$ messages, rather than the $O(n^2)$ messages achieved by other algorithms.
 	The reason that Intel SGX is needed for this algorithm is that the primary, who distributes the secrets, can fake being any node as he has all parts of the secret.
 	Trusted Execution Environments (TEE) as introduced by Intel SGX, means that these secrets can be computed and distributed without the primary every having access to them.
 	A further issue with the strawman design, is that the primary can change the orders of requests, thereby equivocate which request is being voted on.
-	This is once again solved by Intel SGX, by numbering requests with a trusted counter than can only be incremented.
+	This is once again solved by Intel SGX, by numbering requests with a trusted counter that can only be incremented.
 
 	In particular, the Hyperledger Sawtooth \cite{poet} project is interesting as it is closely related to the goals of our project.
-	Hyperledger Sawtooth, is an ongoing blockchain project, which replaces the need for mining by using a consensus algorithm called Proof of Elapsed Time (PoET).
+	Hyperledger Sawtooth is an ongoing blockchain project, which replaces the need for mining by using a consensus algorithm called Proof of Elapsed Time (PoET).
 	In PoET a number of nodes who choose to participate as validators each create a timer using Intel SGX.
 	This timer is different per validator and contains a timestamp some time in the future, with a degree of randomness.
 	A validator can also check that a timer is valid, using Intel SGX, and also whether or not that timer has expired.
@@ -117,127 +116,104 @@
 	This is a strong indicator that Intel SGX can be used for efficiently attaining consensus.
 
 	\section{Background}
-	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
-	We assume the user has some familiarity with DCR graphs and therefore it will not be described in this paper.	
+	The three primary components of the proposed solution are the following: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
+	We assume the reader has some familiarity with DCR graphs and therefore it will not be described in this paper.	
 
 		\subsection{SGX}
-		Intel SGX is a \textit{Trusted Execution Environment} (TEE) technology which allows users to define protected areas of memory, so called \textit{enclaves}.
+		Intel SGX is a TEE technology which allows users to define protected areas of memory, so called \textit{enclaves}.
 		Intel guarantees \cite{sgx} that any code run and data loaded in the TEE is protected from access by any process running outside of the enclave.
 		More specifically, the guarantees encompass \textit{confidentiality}, i.e. no other process can read the data in the enclave, and \textit{integrity}, i.e. no other process can modify the data in the enclave. 
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
 		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
 		An additional feature of Intel SGX is that the result of any code run using Intel SGX can be verified by other users, given the code and the output.
 
-		This is all made possible by unique keys generated at manufacturing and stored inside the fuse array of the processor.
+		This is all made possible by unique keys generated during manufacturing and permanently stored inside the fuse array of the processor.
 		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
 
-		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level, along with the concept of memory which Intel guarantees that only verifiably correct processes can access.
-		These two concepts put together enables tamper proof messages, where the sender can be verified as being a correct process.
+		In short, the major innovation in Intel SGX is the option of running hardware secured software, which enables tamper proof messages, where the sender can be verified as being a correct process.
 		This eases some of the inherent problems in consensus, as seen in \cite{fastbft} and \cite{poet}.
 
-      \subsubsection{Enclave}
-      What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
-      \begin{description}
-        \item [Processor Reserved Memory (PRM)] is a sequential block of memory reserved for SGX inaccessible from untrusted software and even hardware.
-        \item [Enclave mode] is a mode under which a logical processor gains access to the PRM, allowing trusted software exclusive access to its own memory.
-      \end{description}
-      Using these hardware facilities SGX defines the concept of an enclave.
-      An enclave is, as its name suggests, a software module isolated completely from the rest of the system.
-      Its memory is located solely in PRM, protecting it access by other processes and enclaves running on the system. 
-      The PRM is protected from non-enclave processes, as a product of the enclave mode. 
-      When a process is outside enclave mode and try to access the PRM, the access memory is simply bounced \cite{intel-sgx-explained}.
-      An enclave-process's PRM memory is protected from accesses by other processes in enclave-mode by the SGX Enclave Control Structure (SECS). 
-      The SECS holds meta-data about the enclave processes, and among this is a virtual-to-physical memory mapping called the Enclave Page Cache (EPC). 
-      Through the EPC, an enclave's access to physical PRM is reduced to what has been allocated for the enclave-process \cite{intel-sgx-explained}.
+			\subsubsection{Enclave}
+			What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
+			\begin{description}
+			\item [Processor Reserved Memory (PRM)] is a sequential block of memory reserved for SGX, inaccessible from untrusted software and even hardware.
+			\item [Enclave mode] is a mode under which a logical processor gains access to the PRM.
+			\end{description}
+			Using these hardware facilities SGX defines the concept of an enclave.
+			An enclave is, as its name suggests, a software module isolated completely from the rest of the system.
+			Its memory is located solely in PRM, preventing access by other processes and enclaves running on the system. 
+			The PRM is protected from non-enclave processes by enclave mode. 
+			When a process is not in enclave mode and tries to access the PRM, the memory access is denied \cite{intel-sgx-explained}.      
+			The PRM of an enclave process is protected from accesses by other processes in enclave mode by the SGX Enclave Control Structure (SECS). 
+			The SECS holds meta data about the enclave processes, and among this is a virtual-to-physical memory mapping called the Enclave Page Cache (EPC). 
+			Through the EPC an enclave's access to physical PRM is restricted to what has been allocated for the enclave-process \cite{intel-sgx-explained}.
 
-      While SGX provides powerful guarantees trough its enclave concept, it does not guarantee software correctness and will not protect against flawed software.
-      Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes \cite{sgx-dev-guide}.
-      By minimizing the size of the TCB, and thus the amount of software one must trust, common security principles indicate that the chance of security flaws decreases \cite{sgx-dev-guide}.
+			While SGX provides powerful guarantees trough its enclave concept, it does not guarantee software correctness and will not protect against flawed software.
+			Instead SGX encourages developers to isolate a minimal piece of their software, the Trusted Computing Base (TCB), in a trusted enclave environment, and keep the remainder as traditional system processes \cite{sgx-dev-guide}.
+			By minimizing the size of the TCB, and thus the amount of code one must trust, common security principles indicate that the chance of security flaws decreases \cite{sgx-dev-guide}.
 
-      In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{enclave calls} (ECALL) and \textit{out calls} (OCALL).
-      This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs, in a so-called \textit{EDL}-file \cite{sgx-dev-guide}.
+			In order for an isolated enclave to be useful, communication between trusted and untrusted software is enabled through \textit{enclave calls} (ECALL) and \textit{out calls} (OCALL).
+			This interface must be defined at compile-time, specifying an API of ECALLs for the enclave as well as any untrusted services needed as OCALLs, in a \textit{EDL}-file \cite{sgx-dev-guide}.
 
-      % Signature
-      When built, an enclave module is a plain binary on the untrusted file system.
-      As an enclave under such circumstances would be vulnerable to tampering before initialization, SGX enforces a strict signature policy.
-      An enclave must include an \textit{Enclave Signature} containing \textbf{(a)} a hash of the code and initialization data of the enclave, \textbf{(b)} the author's public key \textbf{(c)} and an enclave version/product number.
-      During enclave initialization a hardware check is performed, ensuring the Enclave Signature matches the enclave binary loaded from the file system.
+			When built, an enclave module is a plain binary on the untrusted file system.
+			As an enclave under such circumstances would be vulnerable to tampering before initialization, SGX enforces a strict signature policy.
+			An enclave must include an \textit{Enclave Signature} containing \textbf{(a)} a hash of the code and initialization data of the enclave, \textbf{(b)} the author's public key and \textbf{(c)} an enclave version/product number.
+			During enclave initialization a hardware check is performed, ensuring the Enclave Signature matches the enclave binary loaded from the file system.
 
-      % Sealing
-      Another powerful tool of an SGX enclave is the ability to read and write data to an untrusted storage medium while ensuring confidentiality of its contents.
-      Such capabilities are needed as the PRM is volatile and will not persist a shut down.
-      In SGX this process is known as \textit{sealing}.
-      Sealing allows encryption and decryption using a so-called \textit{Seal Key}, which is confidential to either the Enclave Signature, allowing access only the current enclave version, or the Enclave Signature without the version number, allowing access to the current enclave version as well as future (and previous) versions.
-      % encryption algos?
-      % distinguising between running enclave instances
+			Another powerful tool of an SGX enclave is the ability to read from and write data to an untrusted storage medium while ensuring confidentiality of its contents.
+			Such capabilities are needed as the PRM is volatile and will not persist after shutdown.
+			In SGX this process is known as \textit{sealing}.
+			Sealing allows encryption and decryption using a \textit{Seal Key}, which is confidential to the Enclave Signature.
 
 			\subsubsection{Attestation}
 			Attestation, within the Intel SGX platform, is the action of verifying the existence of specific enclaves.
 			The applications of this are two-fold, in the case where there are multiple enclaves running locally on the same CPU and in the case where enclaves need to communicate to enclaves running on external CPUs.
-			These two situations are handled by two different processes, aptly named local and remote attestation, respectively.
-			% In the former case of remote attestation, there is a considerable amount of setup needed to be done once, beforehand.
-			% A signed certificated from a recognized certificate authority needs to be obtained by the application author.
-			% The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
+			These two situations are handled by two different processes, aptly named local and remote attestation.
       
-      Local attestation builds on a secret fused into the CPU.
-      An enclave can use an SGX instruction to generate a report uniquely identifying the enclave.
-      This report is MACed with a key derived from the fused secret and enclave identifier.
-      It is not possible to fake such a MACed report, as the MACing happens in hardware components that ensure that the report corresponds to the caller enclave.
-      The fused secret is not directly accessible by software components, but can only be used by certain hardware instructions that protect against malicious use.
-      An attestation challenger enclave will ask for a MACed report from the client enclave, and after receiving it derive the same key to verify the MAC.
-      Because a report can only be created by the enclave it describes, the challenger can be certain of which enclave the client is running if the MAC is valid.
-      To prevent replays the MACed report is allowed to contain a block of arbitrary data, in which the challenger can require a nonce.
-      
-      Remote attestation build on the same concept of a report, but as challenger and client are now on different CPUs, they no longer hold the same fused secret.
-      Instead remote attestation relies on the group signature scheme Enhanced Privacy ID (EPID) and a third party issuer.
-      Each SGX enabled CPU is granted an EPID Member Private Key by the third party issuer some time after manufacturing.
-      Like the fused secret, this private key is not directly accessible to an enclave.
-      Under the EPID scheme, all issuer generated private keys share the same public key.
-      When remote attestation takes place, the client enclave generates a report and attests locally with the Quoting Enclave (QE).
-      The QE, now convinced of the client enclave's identify, strips the MAC off the report and instead signs it with the EPID Member Private Key, which the QE has special privileges to access\footnote{Enclaves signed by Intel have special privileges throughout SGX. This allows SGX to implement complicated SGX instructions in software.}.
-      The remote challenger can verify the signed report with the EPID Group Public Key and be sure that \textbf{(a)} the report is signed by an EPID Member Private Key, \textbf{(b)} EPID Member Private Keys are granted secret to QEs, \textbf{(c)} and QEs will not sign false reports.
+			Local attestation builds on a secret fused into the CPU.
+			An enclave can use an SGX instruction to generate a report uniquely identifying the enclave.
+			This report is MACed with a key derived from the fused secret and enclave identifier.
+			It is not possible to fake such a MACed report, as the MACing happens in hardware components that ensure that the report corresponds to the caller enclave.
+			The fused secret is not directly accessible by software components, but can only be used by certain hardware instructions that protect against malicious use.
+			An attestation challenger will ask for a MACed report from the client enclave, and after receiving it derive the same key to verify the MAC.
+			Because a report can only be created by the enclave it describes, the challenger can be certain of which enclave the client is running if the MAC is valid.
+			To prevent replays the MACed report is allowed to contain a block of arbitrary data, in which the challenger can require a nonce.
 
-			% The specific details of the remote attestation is then up to the API exposed by the application author, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
-			% The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
-			% The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
-			% The extended GID is then checked for support and if it is, the ISV service responds with a success message.
-			% The enclave then retrieves the actual GID and sends that to the ISV service, who checks that key with IAS.
-			% The ISV service then sends a Quote to the enclave, which attests that specific enclave to the IAS and the IAS only.
-			% This exchange is encrypted used the Diffie-Hellman Key Exchange. 
-
-			% For testing purposes, Intel also allows self-signed keys after a certificate has been obtained, which will likely be useful in the future work of this project.
-
-			% In the latter case of local attestation, the report key can be used by both enclaves, since they run on the same system, to sign messages, thereby proving that they run on the same system.
-			% This is done through a Diffie-Hellmann Key Exchange utilizing the report key\footnote{This exchange is described in more detail here \url{https://software.intel.com/en-us/node/709011}.}.
-			% Further communication between these enclaves can be sent through a protected channel.
+			Remote attestations build on the same concept of a report, but as challenger and client are now on different CPUs, they no longer hold the same fused secret.
+			Instead remote attestation relies on the group signature scheme Enhanced Privacy ID (EPID) and a third party issuer.
+			Each SGX enabled CPU is granted an EPID Member Private Key by the third party issuer some time after manufacturing.
+			Like the fused secret, this private key is not directly accessible to an enclave.
+			Under the EPID scheme, all issuer generated private keys share the same public key (EPID Group Public Key).
+			When remote attestation takes place, the client enclave generates a report and attests locally with the Quoting Enclave (QE).
+			The QE, now convinced of the client enclave's identify, strips the MAC off the report and instead signs it with the EPID Member Private Key, which the QE has special privileges to access\footnote{Enclaves signed by Intel have special privileges throughout SGX. This allows SGX to implement complicated SGX instructions in software.}.
+			The remote challenger can verify the signed report with the EPID Group Public Key and be sure that \textbf{(a)} the report is signed by an EPID Member Private Key, \textbf{(b)} EPID Member Private Keys are granted secret to QEs, and \textbf{(c)} QEs will not sign false reports.
 
 			\subsubsection{Monotonic counters}
-			One of the functions provided by Intel SGX which is especially relevant for this project, is the access to \textit{trusted monotonic counters}.
+			One of the functions provided by Intel SGX, which is especially relevant for this project, is the access to \textit{trusted monotonic counters}.
 			As indicated by the name, monotonic counters are integer counters, that can only be incremented.
-			These counters run inside enclaves, hence the \textit{trusted} part of its name, and are sealed after incrementation, preventing access from unauthorized programs.
-			Monotonic counters were originally implemented in order to safeguard against rollback attacks, but given their strong guarantees they could possibly be used as part of a consensus algorithm for the project described in this paper.
+			They are implemented as a block of non-volatile memory accessible only through SGX instructions, protecting against replay attacks.
 
 		\subsection{Consensus}
-		One of the goals is to establish agreement in a history of a workflow, see section \ref{subsec:problem}. Agreement on this history implies a solution to \textit{consensus}, see \cite{mds-book}, for formal definition.
+		One of the goals is to establish agreement in a history of a workflow (see section \ref{subsec:problem}). Agreement on this history implies a solution to \textit{consensus}. 
+		See \cite{mds-book} for formal definition.
 		Solving consensus will likely be the part where Intel SGX is the most applicable, suggested by the consensus solutions in fastBFT \cite{fastbft} and PoET \cite{poet}
 
 		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.
 
 	\section{Implementation}
-	In order to demonstrate that the proposed solution could work, we demonstrate the implementation of a monotonic counter in \cpp.
+	In order to demonstrate the application of Intel SGX we show the implementation of a monotonic counter in \cpp.
 
-	\subsection{Trusted monotonic counter example}
-	The implemented example is separated into two parts:
-	\begin{description}
-		\item [TMCtest] is the enclave code. It is able to seal and unseal data, so that it is protected from tampering outside the enclave. It can create, increment and read monotonic counters. Due to the nature of enclaves, it is not able to make any I/O calls, which is why it needs the untrusted part of the code for this.
-		\item [Untrusted] is the untrusted part of the code. It essentially acts as a wrapper for the enclave, in that it is responsible for all I/O calls. It is able to take and parse commands from the command-line and call the appropriate enclave function. It is also able to print and read enclave-sealed monotonic counters.  
-	\end{description}
-	The interface between TMCtest and Untrusted are specified by the EDL file \texttt{TMCtest.edl} (snippet \ref{snippet:tmctest.edl}). The EDL specifies which functions the untrusted code can call in the enclave (ECALLs), in the \texttt{trusted} block. 
-	It is also able to specify which functions the enclave can call in the untrusted code (OCALLs), in the \texttt{untrusted} block, but there are none of these present in the example:
+		\subsection{Trusted monotonic counter example}
+		The implemented example is separated into two parts:
+		\begin{description}
+			\item [TMCtest] is the enclave code. It is able to seal and unseal data, so that it is protected from tampering outside the enclave. It can create, increment and read monotonic counters. Due to the nature of enclaves, it is not able to make any I/O calls.
+			\item [Untrusted] is the untrusted part of the code. It essentially acts as a wrapper for the enclave, in that it is responsible for all I/O calls. It is able to take and parse commands from the command-line and call the appropriate enclave functions. It is also able to print and read sealed monotonic counters.  
+		\end{description}
+		The interface between TMCtest and Untrusted are specified by the EDL file \texttt{TMCtest.edl} (snippet \ref{snippet:tmctest.edl}). The EDL specifies which functions the untrusted code can call in the enclave (ECALLs), in the \texttt{trusted} block. 
+		It is also able to specify which functions the enclave can call in the untrusted code (OCALLs), in the \texttt{untrusted} block, but there are none of these present in the example:
 
-	\vspace{-1cm}
-	\begin{snippet}[!ht]
-	\begin{lstlisting}[language=C++, numbers=none]
+		\begin{snippet}[!ht]
+		\begin{lstlisting}[language=C++, numbers=none]
 enclave {
 	from "sgx_tae_service.edl" import *;
     trusted {
@@ -254,36 +230,35 @@ untrusted {
         /* define OCALLs here. */
     };
 };
-	\end{lstlisting}
-	\caption{\texttt{TMCtest.edl}, the interface between the enclave and the untrusted code\label{snippet:tmctest.edl}}
-	\end{snippet}
+		\end{lstlisting}
+		\caption{\texttt{TMCtest.edl}, the interface between the enclave and the untrusted code\label{snippet:tmctest.edl}}
+		\end{snippet}
 
-	The struct created for the monotonic counter data is called \texttt{monotonic\_counter} (snippet \ref{snippet:monotonic-counter}), and is only accessible by the enclave. It consists of the current monotonic counter value, as wells as the unique id of the monotonic counter, which SGX uses for accessing the appropriate non-volatile memory.
+		The struct created for the monotonic counter data is called \texttt{monotonic\_counter} (snippet \ref{snippet:monotonic-counter}), and is only accessible by the enclave. It consists of the current monotonic counter value, as wells as the unique id of the monotonic counter, which SGX uses for accessing the appropriate non-volatile memory.
 
-	\vspace{-1cm}
-	\begin{snippet}[!ht]
-		\begin{lstlisting}[language=C++, numbers=none]
+		\begin{snippet}[!ht]
+			\begin{lstlisting}[language=C++, numbers=none]
 typedef struct _monotonic_counter
 {
   sgx_mc_uuid_t mc;
   uint32_t mc_value;
 }monotonic_counter;
-		\end{lstlisting}
-		\caption{monotonic\_counter struct in \texttt{TCMtest$.$cpp} \label{snippet:monotonic-counter}}
-	\end{snippet}
+			\end{lstlisting}
+			\caption{monotonic\_counter struct in \texttt{TCMtest$.$cpp} \label{snippet:monotonic-counter}}
+		\end{snippet}
 
-	When creating and accessing monotonic counters, SGX needs to establish a session with the so-called Platform Services Enclave (PSE), which is a protected enclave, only accessible by other local enclaves. 
-	The PSE provides access to protected functionality, such as monotonic counters, sealing and attestation.
-	After establishing this session, the creation of a monotonic counter is simply a call to \texttt{sgx\_create\_monotonic\_counter}.
-	When the monotonic counter has been created, the struct is sealed and passed to the untrusted code. 
-	Here it is important to note that the memory containing the unsealed data must be cleared before returning the sealed data to the untrusted code, in order to prevent leaking data.
+		When creating and accessing monotonic counters, SGX needs to establish a session with the Platform Services Enclave (PSE), which is a protected enclave, only accessible by other local enclaves. 
+		The PSE provides access to protected functionality, such as monotonic counters, sealing and attestation.
+		After establishing this session, the creation of a monotonic counter is simply a call to \texttt{sgx\_create\_monotonic\_counter}.
+		When the monotonic counter has been created, the struct is sealed and passed to the untrusted code. 
+		Here it is important to note that the memory containing the unsealed data must be cleared before returning the sealed data to the untrusted code, in order to prevent leaking data.
 
-	Incrementing a monotonic counter is very similar to creating it. 
-	Due to the fact that the untrusted code only has access to sealed structs, however, the passed data must first be unsealed. 
-	This is accomplished with a call to \texttt{sgx\_unseal\_data}. 
-	The data is also verified (i.e. that the value of the monotonic counter is as expected), to ensure that the data has not been tampered with.
-	The verification does not guarantee that another instance of the enclave has not unsealed the data and incremented the counter. 
-	However, it has to be another instance of the exact enclave, as the sealing process is encryption with a Seal Key, which is unique to the enclave and platform \cite{sgx-dev-guide}.
+		Incrementing a monotonic counter is very similar to creating it. 
+		Due to the fact that the untrusted code only has access to sealed structs, however, the passed data must first be unsealed. 
+		This is accomplished with a call to \texttt{sgx\_unseal\_data}. 
+		The data is also verified (i.e. that the value of the monotonic counter is as expected), to ensure that the data has not been tampered with.
+		The verification does not guarantee that another instance of the enclave has not unsealed the data and incremented the counter. 
+		However, it has to be another instance of the exact enclave, as the sealing process is encryption with a Seal Key, which is unique to the enclave and platform \cite{sgx-dev-guide}.
 
 	\section{Challenges}
 	The primary challenges in this project are concerned with SGX and consensus.
