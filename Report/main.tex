@@ -122,7 +122,7 @@
 
 		\subsection{SGX}
 		Intel SGX is a \textit{Trusted Execution Environment} (TEE) technology which allows users to define protected areas of memory, so called \textit{enclaves}.
-		Intel guarantees \cite{sgx} that any code run and data loaded in the TEE is protected from access by any process running outside of the enclave. 
+		Intel guarantees \cite{sgx} that any code run and data loaded in the TEE is protected from access by any process running outside of the enclave.
 		More specifically, the guarantees encompass \textit{confidentiality}, i.e. no other process can read the data in the enclave, and \textit{integrity}, i.e. no other process can modify the data in the enclave. 
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
 		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
@@ -178,25 +178,48 @@
 
 			\subsubsection{Attestation}
 			Attestation, within the Intel SGX platform, is the action of verifying the existence of specific enclaves.
-			The applications of this are two-fold, in the case where enclaves need to communicate to enclaves running on external CPUs and in the case where there are multiple enclaves running locally on the same CPU.
-			These two situations are handled by two different processes, aptly named remote attestation and local attestation, respectively.
-			In the former case of remote attestation, there is a considerable amount of setup needed to be done once, beforehand.
-			A signed certificated from a recognized certificate authority needs to be obtained by the application author.
-			The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
+			The applications of this are two-fold, in the case where there are multiple enclaves running locally on the same CPU and in the case where enclaves need to communicate to enclaves running on external CPUs.
+			These two situations are handled by two different processes, aptly named local and remote attestation, respectively.
+			% In the former case of remote attestation, there is a considerable amount of setup needed to be done once, beforehand.
+			% A signed certificated from a recognized certificate authority needs to be obtained by the application author.
+			% The certificate needs to then be registered with Intel, who upon acceptance will provide a Service Provider ID (SPID).
+      
+      Local attestation builds on a secret fused into the CPU.
+      An enclave can use an SGX instruction to generate a report uniquely identifying the enclave.
+      This report is MACed with a key derived from the fused secret and enclave identifier.
+      It is not possible to fake such a MACed report, as the MACing happens in hardware components that ensure that the report corresponds to the caller enclave.
+      The fused secret is not directly accessible by software components, but can only be used by certain hardware instructions that protect against malicious use.
+      An attestation challenger enclave will ask for a MACed report from the client enclave, and after receiving it derive the same key to verify the MAC.
+      Because a report can only be created by the enclave it describes, the challenger can be certain of which enclave the client is running if the MAC is valid.
+      To prevent replays the MACed report is allowed to contain a block of arbitrary data, in which the challenger can require a nonce.
+      
+      Remote attestation build on the same concept of a report, but as challenger and client are now on different CPUs, they no longer hold the same fused secret.
+      Instead remote attestation relies on the group signature scheme Enhanced Privacy ID (EPID) and a third party issuer.
+      Each SGX enabled CPU is granted an EPID Member Private Key by the third party issuer some time after manufacturing.
+      Like the fused secret, this private key is not directly accessible to an enclave.
+      Under the EPID scheme, all issuer generated private keys share the same public key.
+      When remote attestation takes place, the client enclave generates a report and attests locally with the Quoting Enclave (QE).
+      The QE, now convinced of the client enclave's identify, strips the MAC off the report and instead signs it with the EPID Member Private Key, which the QE has special privileges to access\footnote{Enclaves signed by Intel have special privileges throughout SGX. This allows SGX to implement complicated SGX instructions in software.}.
+      The remote challenger can verify the signed report with the EPID Group Public Key and be sure that
+      \begin{itemize}
+        \item the report is signed by an EPID Member Private Key,
+        \item EPID Member Private Keys are granted secret to QEs,
+        \item and QEs will not sign false reports.
+      \end{itemize}
 
-			The specific details of the remote attestation is then up to the API exposed by the application author, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
-			The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
-			The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
-			The extended GID is then checked for support and if it is, the ISV service responds with a success message.
-			The enclave then retrieves the actual GID and sends that to the ISV service, who checks that key with IAS.
-			The ISV service then sends a Quote to the enclave, which attests that specific enclave to the IAS and the IAS only.
-			This exchange is encrypted used the Diffie-Hellman Key Exchange. 
+			% The specific details of the remote attestation is then up to the API exposed by the application author, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
+			% The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
+			% The enclave responds with its extended Group ID (GID), supplied by SGX using the Enhanced Privacy ID (EPID).
+			% The extended GID is then checked for support and if it is, the ISV service responds with a success message.
+			% The enclave then retrieves the actual GID and sends that to the ISV service, who checks that key with IAS.
+			% The ISV service then sends a Quote to the enclave, which attests that specific enclave to the IAS and the IAS only.
+			% This exchange is encrypted used the Diffie-Hellman Key Exchange. 
 
-			For testing purposes, Intel also allows self-signed keys after a certificate has been obtained, which will likely be useful in the future work of this project.
+			% For testing purposes, Intel also allows self-signed keys after a certificate has been obtained, which will likely be useful in the future work of this project.
 
-			In the latter case of local attestation, the report key can be used by both enclaves, since they run on the same system, to sign messages, thereby proving that they run on the same system.
-			This is done through a Diffie-Hellmann Key Exchange utilizing the report key\footnote{This exchange is described in more detail here \url{https://software.intel.com/en-us/node/709011}.}.
-			Further communication between these enclaves can be sent through a protected channel.
+			% In the latter case of local attestation, the report key can be used by both enclaves, since they run on the same system, to sign messages, thereby proving that they run on the same system.
+			% This is done through a Diffie-Hellmann Key Exchange utilizing the report key\footnote{This exchange is described in more detail here \url{https://software.intel.com/en-us/node/709011}.}.
+			% Further communication between these enclaves can be sent through a protected channel.
 
 			\subsubsection{Monotonic counters}
 			One of the functions provided by Intel SGX which is especially relevant for this project, is the access to \textit{trusted monotonic counters}.
