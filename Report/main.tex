@@ -117,7 +117,6 @@
 	This is a strong indicator that Intel SGX can be used for efficiently attaining consensus.
 
 	\section{Background}
-
 	The three primary components of the proposed solution are as follows: the workflow, which will be described with DCR, Intel SGX and method for achieving distributed consensus.
 	We assume the user has some familiarity with DCR graphs and therefore it will not be described in this paper.	
 
@@ -133,6 +132,8 @@
 		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
 
 		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level, along with the concept of memory which Intel guarantees that only verifiably correct processes can access.
+		These two concepts put together enables tamper proof messages, where the sender can be verified as being a correct process.
+		This eases some of the inherent problems in consensus, as seen in \cite{fastbft} and \cite{poet}.
 
       \subsubsection{Enclave}
       What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
