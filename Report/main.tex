@@ -113,8 +113,8 @@
 	We assume the user has some familiarity with DCR graphs and therefore it will not be described in this paper.	
 
 		\subsection{SGX}
-		Intel SGX is a technology which allows users to define protected areas of memory, so called \textit{enclaves}, and both run code and store data within these enclaves.
-		Intel guarantees \cite{sgx} that any code run this way is protected from access by any process running outside of the enclave. 
+		Intel SGX is a \textit{Trusted Execution Environment} (TEE) technology which allows users to define protected areas of memory, so called \textit{enclaves}.
+		Intel guarantees \cite{sgx} that any code run and data loaded in the TEE is protected from access by any process running outside of the enclave. 
 		More specifically, the guarantees encompass \textit{confidentiality}, i.e. no other process can read the data in the enclave, and \textit{integrity}, i.e. no other process can modify the data in the enclave. 
 		If the enclave contains secrets which the user wishes to keep, but still does not want to trust external processes with, the enclave can be sealed on disk, essentially encrypting it for later use.
 		This means that data can be stored and processed securely, with its security guaranteed by Intel, if done properly.
@@ -123,7 +123,7 @@
 		This is all made possible by unique keys generated at manufacturing and stored inside the fuse array of the processor.
 		Some of these keys are known by Intel for the system to be recognized when contacting Intel servers.
 
-		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level.
+		In short, the major innovation in Intel SGX is the option of using asymmetric encryption with the keys already being distributed and tamper proof at hardware level, along with the concept of memory which Intel guarantees that only verifiably correct processes can access.
 
       \subsubsection{Enclave}
       What allows SGX enabled CPUs to provide these strong guarantees builds on the following two hardware details:
