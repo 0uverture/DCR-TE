@@ -77,6 +77,7 @@
 	As the new innovation applied in this project is Intel SGX, it will be investigate what sort of advantages it grants in the implementation of a distributed network.
 
 		\subsection{Problem}
+		\label{subsec:problem}
 
 		During this project we will investigate whether or not it is possible to create a secure implementation of a distributed Dynamic Condition Response\cite{dcr-paper} (DCR) engine using Intel Software Guard Extensions\cite{intel-sgx-explained} (SGX).
 
@@ -188,14 +189,8 @@
 			Further communication between these enclaves can be sent through a protected channel.
 
 		\subsection{Consensus}
-		Consensus is the problem of establishing agreement between two or more processes in a distributed setting. Formally consensus is defined as a protocol in which $N$ processes ($P_0, P_1, \dots, P_{n-1}$) starts in an undecided state. Each process will then propose a single value, $v_i$, from a set of values, $D$. The processes communicate their propositions to each other, and each decide on a decision-variable, $d_i$. They are now in a decided state. If the following requirements are met, the protocol solves the consensus problem:
-		\begin{description}
-			\item[Termination] Every process eventually sets its decision-variable. 
-			\item[Agreement] The decision-variables of all correct processes are set to the same value.
-			\item[Integrity] If every correct process proposes the same $v$, then all correct processes decide $d_i = v$.
-		\end{description}
-
-		In relation to this project, this is one of the issues which needs to be solved, for the proposed solution to work and will likely be the part where Intel SGX is the most applicable.
+		One of the goals is to establish agreement in a history of a workflow, see section \ref{subsec:problem}. Agreement on this history implies a solution to \textit{consensus}, see \cite{mds-book}, for formal definition.
+		Solving consensus will likely be the part where Intel SGX is the most applicable, suggested by the consensus solutions in fatBFT \cite{fastbft} and PoET \cite{poet}
 
 		In a famous result from 1985, known as the FLP impossibility result\cite{flp}, it was shown that consensus was impossible to solve in an asynchronous setting with as little as a single crashing process. The FLP impossibility result can, very simplistically, be expressed as the problem of distinguishing a failed process from a delayed message in an asynchronous system.
 
@@ -415,6 +410,11 @@ typedef struct _monotonic_counter
 	    \textit{Silent Bob is Silent}.
 	    \url{https://embedi.com/wp-content/uploads/dlm_uploads/2017/11/silent-bob-is-silent.pdf}
 		Accessed 2017-12-18.
+
+		\bibitem{mds-book}
+		George Coulouris and Jean Dollimore and Tim Kindberg and Gordon Blair
+		\textit{Distributed Systems, Concepts and Design, 5th ed.}
+		Pearson education (2005)
 	\end{thebibliography}
 
 \end{document}
