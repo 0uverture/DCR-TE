@@ -108,7 +108,7 @@
 	A further issue with the strawman design, is that the primary can change the orders of requests, thereby equivocate which request is being voted on.
 	This is once again solved by Intel SGX, by numbering requests with a trusted counter than can only be incremented.
 
-	In particular, the Hyperledger Sawtooth \cite{poet} project is interesting as it is very closely related to the goals of our project.
+	In particular, the Hyperledger Sawtooth \cite{poet} project is interesting as it is closely related to the goals of our project.
 	Hyperledger Sawtooth, is an ongoing blockchain project, which replaces the need for mining by using a consensus algorithm called Proof of Elapsed Time (PoET).
 	In PoET a number of nodes who choose to participate as validators each create a timer using Intel SGX.
 	This timer is different per validator and contains a timestamp some time in the future, with a degree of randomness.
@@ -160,12 +160,7 @@
       % Signature
       When built, an enclave module is a plain binary on the untrusted file system.
       As an enclave under such circumstances would be vulnerable to tampering before initialization, SGX enforces a strict signature policy.
-      An enclave must include an \textit{Enclave Signature} containing
-      \begin{itemize}
-        \item a hash of the code and initialization data of the enclave,
-        \item the author's public key
-        \item and an enclave version/product number.
-      \end{itemize}
+      An enclave must include an \textit{Enclave Signature} containing \textbf{(a)} a hash of the code and initialization data of the enclave, \textbf{(b)} the author's public key \textbf{(c)} and an enclave version/product number.
       During enclave initialization a hardware check is performed, ensuring the Enclave Signature matches the enclave binary loaded from the file system.
 
       % Sealing
@@ -200,12 +195,7 @@
       Under the EPID scheme, all issuer generated private keys share the same public key.
       When remote attestation takes place, the client enclave generates a report and attests locally with the Quoting Enclave (QE).
       The QE, now convinced of the client enclave's identify, strips the MAC off the report and instead signs it with the EPID Member Private Key, which the QE has special privileges to access\footnote{Enclaves signed by Intel have special privileges throughout SGX. This allows SGX to implement complicated SGX instructions in software.}.
-      The remote challenger can verify the signed report with the EPID Group Public Key and be sure that
-      \begin{itemize}
-        \item the report is signed by an EPID Member Private Key,
-        \item EPID Member Private Keys are granted secret to QEs,
-        \item and QEs will not sign false reports.
-      \end{itemize}
+      The remote challenger can verify the signed report with the EPID Group Public Key and be sure that \textbf{(a)} the report is signed by an EPID Member Private Key, \textbf{(b)} EPID Member Private Keys are granted secret to QEs, \textbf{(c)} and QEs will not sign false reports.
 
 			% The specific details of the remote attestation is then up to the API exposed by the application author, but is outlined by Intel\footnote{At \url{https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example}}.
 			% The enclave wishing to perform remote attestation requests it from the ISV API and is challenged to prove its identity.
