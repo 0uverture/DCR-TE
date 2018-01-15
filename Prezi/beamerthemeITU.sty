@@ -1,0 +1,129 @@
+% IT University of Copenhagen beamer theme
+\ProvidesPackage{ITU}[2017/09/13]
+
+\RequirePackage[export]{adjustbox}
+\RequirePackage{tikz}
+\RequirePackage{varwidth}
+\RequirePackage[overload]{textcase}
+\RequirePackage{helvet}
+
+\usetikzlibrary{fadings}
+
+\def\ITUBeamerVersion{0.1}
+\definecolor{beamer@structure@color}{named}{black}
+
+\setbeamertemplate{background canvas}{%
+    \ifnum\c@framenumber=1%
+        \begin{tikzpicture}
+            \node[scope fading=east, inner sep=0pt, outer sep=0pt, anchor=north east] at (\paperwidth, \paperheight) {\adjincludegraphics[trim={0 0 {0.7\width} 0}, clip,  height=\paperheight]{itu_titlepage.jpg}};
+        \end{tikzpicture}
+    \fi%
+}
+
+\defbeamertemplate*{footline}{infolines theme}
+{
+    \leavevmode%
+    \includegraphics[height=0.6cm]{itu_logo_new}\hfill\insertframenumber\phantom{XX}%
+    \vskip1em%
+}
+
+\defbeamertemplate*{headline}{infolines theme}
+{
+%\fbox{
+%\usebeamerfont{title}\insertframetitle\par%
+%}
+}
+
+\setbeamercolor*{palette primary}{use=structure,fg=black,bg=black}
+\setbeamercolor*{palette secondary}{use=structure,fg=black,bg=black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=black,bg=black}
+\setbeamercolor*{frametitle}{use=structure,fg=white,bg=black}
+\setbeamercolor*{author}{use=structure,fg=black}
+%\setbeamercolor*{author}{use=structure,fg=black,bg=white}
+\setbeamercolor{title}{fg=black!80!white}
+%\setbeamercolor{title}{fg=black!80!white,bg=white!20!white}
+
+% Blocks
+\setbeamercolor{structure}{fg=black}
+\setbeamerfont{structure}{shape=\scshape}
+\setbeamertemplate{block begin}{
+    \begin{beamercolorbox}{block title}%
+        \usebeamerfont*{block title}\insertblocktitle%
+    \end{beamercolorbox}%
+    \begingroup
+    \vskip.25em
+    \leftskip1em
+    \rightskip\leftskip
+}
+
+\setbeamertemplate{block end}{
+    \endgroup\vfill
+}
+
+% Title page
+\defbeamertemplate*{title page}{customized}[1][]
+{
+    \thispagestyle{empty}
+    \vspace{3em}
+    \begin{beamercolorbox}[sep=0.5cm]{title}
+        \begin{centering}
+            \usebeamerfont{title}\inserttitle\par
+            \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+        \end{centering}
+    \end{beamercolorbox}
+    \bigskip
+    \vspace{1cm}
+    \begin{beamercolorbox}[sep=0pt]{author}
+        \begin{centering}
+            \usebeamerfont{author}\insertauthor\par
+            \usebeamerfont{institute}\insertinstitute\par
+            \bigskip
+            \usebeamerfont{date}\insertdate\par
+            % \vspace{3cm}
+        \end{centering}
+        %\begin{tikzpicture}[remember picture,overlay]
+        %    \draw (current page.south west) node[yshift=2ex, anchor=west] {
+        %        \includegraphics[width=0.2\textwidth]{itu_logo_new}
+        %    };
+        %\end{tikzpicture}
+    \end{beamercolorbox}
+}
+
+% Comment this if you want navigation symbols
+\defbeamertemplate*{navigation symbols}{customized}
+{%
+}
+
+\defbeamertemplate*{frametitle}{customized}[1][left]
+{
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+  \begin{beamercolorbox}[sep=0.3cm,#1,wd=1.5\textwidth]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1ex%
+    \if@tempswa\else\csname beamer@fte#1\endcsname\fi%
+    \strut\insertframetitle\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip-1ex%
+    \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+  \end{beamercolorbox}%
+}
+
+% Font theme
+\setbeamerfont{frametitle}{family=\sffamily,shape=\upshape,size=\Large}
+\setbeamerfont{framesubtitle}{size=\small,parent={frametitle}}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries,parent={frametitle}}
+\setbeamerfont{subtitle}{size=\large,parent={framesubtitle}}
+\setbeamerfont{subsection in toc}{size=\footnotesize}
+
+\ProcessOptionsBeamer
+
+\mode
+<all>

@@ -1,0 +1,89 @@
+\documentclass{beamer}
+\usepackage{lmodern}
+\usetheme{ITU}
+
+\title{Distributed DCR in a TEE}
+\author{Malthe Kirkbro, Mikkel Gaub, Frederik Madsen}
+\date{January 17, 2018}
+
+\begin{document}
+	\begin{frame}
+		\maketitle	  
+	\end{frame}
+
+	\begin{frame}{The Problem} %Frederik
+		\begin{itemize}
+			\item Distributed DCR
+			\item Consensus
+			\item SGX
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{SGX} %Frederik
+		\begin{itemize}
+			\item Trusted Execution Environment
+			\item Hardware keys
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Enclave} %Malthe
+		\begin{itemize}
+			\item Processor Reserved Memory (PRM)
+			\item Enclave mode
+			\item SGX Enclave Control Structure (SECS)
+			\item Enclave Page Cache (EPC)
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Attestation} %Malthe
+		\begin{itemize}
+			\item Local
+				\begin{itemize}
+					\item Report MACed with CPU-fused key (EREPORT)
+				\end{itemize}
+			\item Remote
+				\begin{itemize}
+					\item Locally attested report signed by EPID private key 
+				\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Trusted Monotonic Counter} %Frederik
+		\begin{itemize}
+			\item Monotonic non-volatile counter
+			\item Demo!
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Security}	%Mikkel
+		\begin{itemize}
+			\item Attacks on confidentiality (including SPECTRE!)
+			\begin{itemize}
+				\item Note that this can be problematic with TLS keys after attestation
+			\end{itemize}
+			\item No (to us known) attacks on integrity
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Related Works} %Mikkel	
+		\begin{itemize}
+			\item Some solutions to similar problems exist, using SGX
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{FastBFT} %Mikkel
+		\begin{itemize}
+			\item BFT with \textit{O(n)}
+			\item SGX solves secret distribution and order of requests
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Hyperledger Sawtooth}	%Mikkel
+		\begin{itemize}
+			\item Ethereum implementation with blockchain using PoET algorithm instead of mining
+			\item Very similar to our imagined solution
+		\end{itemize}
+	\end{frame}
+
+
+\end{document}
