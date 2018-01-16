@@ -22,4 +22,4 @@
 \headcommand {\beamer@subsectionpages {1}{10}}
 \headcommand {\beamer@sectionpages {1}{10}}
 \headcommand {\beamer@documentpages {10}}
-\headcommand {\def \inserttotalframenumber {10}}
+\headcommand {\gdef \inserttotalframenumber {10}}
