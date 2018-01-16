@@ -32,10 +32,10 @@
 				\item Integrity
 				\item Confidentiality
 			\end{itemize}
-			\item Obtained via keys fused onto the CPU. Examples:
+			\item Obtained via secret fused onto the CPU. Examples:
 			\begin{itemize}
-				\item Sealing key (during manufacturing)
-				\item Provisioning key (after manufacturing)
+				\item Sealing secret (during manufacturing)
+				\item Provisioning secret (after manufacturing)
 			\end{itemize}
 		\end{itemize}
 	\end{frame}
@@ -44,8 +44,11 @@
 		\begin{itemize}
 			\item Processor Reserved Memory (PRM)
 			\item Enclave mode
-			\item SGX Enclave Control Structure (SECS)
 			\item Enclave Page Cache (EPC)
+		\end{itemize}
+		\begin{itemize}
+			\item SGX Enclave Control Structure (SECS)
+			\item Signature
 		\end{itemize}
 	\end{frame}
 
@@ -111,7 +114,6 @@
 		\begin{itemize}
 			\item Blockchain without mining
 			\item PoET sent as evidence of block validity
-			\item Side benefits of mining are kept
 		\end{itemize}
 	\end{frame}
 
