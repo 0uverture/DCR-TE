@@ -20,7 +20,7 @@
 			\item Create a Distributed DCR engine
 			\begin{itemize}
 				\item Consensus
-				\item SGX
+				\item Intel SGX
 			\end{itemize}
 		\end{itemize}
 	\end{frame}
@@ -32,23 +32,30 @@
 				\item Integrity
 				\item Confidentiality
 			\end{itemize}
-			\item Obtained via secret fused onto the CPU. Examples:
+			\item Obtained via secrets fused onto the CPU.
 			\begin{itemize}
-				\item Sealing secret (during manufacturing)
-				\item Provisioning secret (after manufacturing)
+				\item Sealing secret (not shared with Intel)
+				\item Provisioning secret (shared with Intel)
 			\end{itemize}
 		\end{itemize}
 	\end{frame}
 
-	\begin{frame}{Enclave} %Malthe
+	\begin{frame}{Enclave} %Frederik
 		\begin{itemize}
 			\item Processor Reserved Memory (PRM)
 			\item Enclave mode
-			\item Enclave Page Cache (EPC)
 		\end{itemize}
 		\begin{itemize}
 			\item SGX Enclave Control Structure (SECS)
-			\item Signature
+			\item Enclave Page Cache Map (EPCM)
+		\end{itemize}
+		\begin{itemize}
+			\item Signature:	
+			\begin{itemize}
+				\item Hash of code and init data
+				\item Author's public key
+				\item Version number
+			\end{itemize}
 		\end{itemize}
 	\end{frame}
 
@@ -114,6 +121,10 @@
 		\begin{itemize}
 			\item Blockchain without mining
 			\item PoET sent as evidence of block validity
+			\begin{itemize}
+				\item \texttt{CreateTimer}
+				\item \texttt{CheckTimer}
+			\end{itemize}
 		\end{itemize}
 	\end{frame}
 
