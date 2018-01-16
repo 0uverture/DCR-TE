@@ -1,5 +1,6 @@
 \documentclass{beamer}
 \usepackage{lmodern}
+\usepackage{pdfpages}
 \usetheme{ITU}
 
 \title{Distributed DCR in a TEE}
@@ -7,8 +8,11 @@
 \date{January 17, 2018}
 
 \begin{document}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+
 	\begin{frame}
-		\maketitle	  
+		\maketitle
 	\end{frame}
 
 	\begin{frame}{The Problem} %Frederik
@@ -45,6 +49,13 @@
 		\end{itemize}
 	\end{frame}
 
+	\begin{frame}{EGETKEY}
+		\includepdf[pages=81,viewport=300 290 570 600, clip, scale=.75]{sgx-explained.pdf}
+
+		\vspace{\stretch{100}}\center\fontsize{4pt}{1}\selectfont
+		Victor Costan \& Srinivas Devadas. Intel SGX Explained. IACR Cryptology ePrint Archive (2016)
+	\end{frame}
+
 	\begin{frame}{Attestation} %Malthe
 		\begin{itemize}
 			\item Local
@@ -53,7 +64,7 @@
 				\end{itemize}
 			\item Remote
 				\begin{itemize}
-					\item Locally attested report signed by EPID private key 
+					\item Locally attested report signed by EPID private key
 				\end{itemize}
 		\end{itemize}
 	\end{frame}
@@ -75,7 +86,7 @@
 		\end{itemize}
 	\end{frame}
 
-	\begin{frame}{Related Works} %Mikkel	
+	\begin{frame}{Related Works} %Mikkel
 		\begin{itemize}
 			\item Some solutions to similar problems exist, using SGX
 		\end{itemize}
