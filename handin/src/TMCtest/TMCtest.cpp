@@ -251,9 +251,8 @@ uint32_t read_sealed_monotonic_counter(uint8_t* sealed_mc_result, uint32_t seale
   do {
     ret = sgx_create_pse_session();
   } while (ret == SGX_ERROR_BUSY && busy_retry_times--);
-  if (ret != SGX_SUCCESS) {
+  if (ret != SGX_SUCCESS)
     return ret; // todo: Clear mem
-  }
 
   ret = read_and_verify_monotonic_counter((sgx_sealed_data_t*)sealed_mc_result,
     &mc_unsealed);

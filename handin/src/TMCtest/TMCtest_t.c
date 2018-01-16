@@ -109,6 +109,7 @@ typedef struct ms_sgx_thread_set_multiple_untrusted_events_ocall_t {
 
 static sgx_status_t SGX_CDECL sgx_create_sealed_monotonic_counter(void* pms)
 {
+	CHECK_REF_POINTER(pms, sizeof(ms_create_sealed_monotonic_counter_t));
 	ms_create_sealed_monotonic_counter_t* ms = SGX_CAST(ms_create_sealed_monotonic_counter_t*, pms);
 	sgx_status_t status = SGX_SUCCESS;
 	uint8_t* _tmp_sealed_mc_result = ms->ms_sealed_mc_result;
@@ -116,10 +117,9 @@ static sgx_status_t SGX_CDECL sgx_create_sealed_monotonic_counter(void* pms)
 	size_t _len_sealed_mc_result = _tmp_sealed_mc_size;
 	uint8_t* _in_sealed_mc_result = NULL;
 
-	CHECK_REF_POINTER(pms, sizeof(ms_create_sealed_monotonic_counter_t));
 	CHECK_UNIQUE_POINTER(_tmp_sealed_mc_result, _len_sealed_mc_result);
 
-	if (_tmp_sealed_mc_result != NULL) {
+	if (_tmp_sealed_mc_result != NULL && _len_sealed_mc_result != 0) {
 		if ((_in_sealed_mc_result = (uint8_t*)malloc(_len_sealed_mc_result)) == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
 			goto err;
@@ -139,6 +139,7 @@ err:
 
 static sgx_status_t SGX_CDECL sgx_increment_monotonic_counter(void* pms)
 {
+	CHECK_REF_POINTER(pms, sizeof(ms_increment_monotonic_counter_t));
 	ms_increment_monotonic_counter_t* ms = SGX_CAST(ms_increment_monotonic_counter_t*, pms);
 	sgx_status_t status = SGX_SUCCESS;
 	uint8_t* _tmp_sealed_mc_result = ms->ms_sealed_mc_result;
@@ -146,10 +147,9 @@ static sgx_status_t SGX_CDECL sgx_increment_monotonic_counter(void* pms)
 	size_t _len_sealed_mc_result = _tmp_sealed_mc_size;
 	uint8_t* _in_sealed_mc_result = NULL;
 
-	CHECK_REF_POINTER(pms, sizeof(ms_increment_monotonic_counter_t));
 	CHECK_UNIQUE_POINTER(_tmp_sealed_mc_result, _len_sealed_mc_result);
 
-	if (_tmp_sealed_mc_result != NULL) {
+	if (_tmp_sealed_mc_result != NULL && _len_sealed_mc_result != 0) {
 		_in_sealed_mc_result = (uint8_t*)malloc(_len_sealed_mc_result);
 		if (_in_sealed_mc_result == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -170,6 +170,7 @@ err:
 
 static sgx_status_t SGX_CDECL sgx_read_sealed_monotonic_counter(void* pms)
 {
+	CHECK_REF_POINTER(pms, sizeof(ms_read_sealed_monotonic_counter_t));
 	ms_read_sealed_monotonic_counter_t* ms = SGX_CAST(ms_read_sealed_monotonic_counter_t*, pms);
 	sgx_status_t status = SGX_SUCCESS;
 	uint8_t* _tmp_sealed_mc_result = ms->ms_sealed_mc_result;
@@ -180,11 +181,10 @@ static sgx_status_t SGX_CDECL sgx_read_sealed_monotonic_counter(void* pms)
 	size_t _len_mc_value = sizeof(*_tmp_mc_value);
 	uint32_t* _in_mc_value = NULL;
 
-	CHECK_REF_POINTER(pms, sizeof(ms_read_sealed_monotonic_counter_t));
 	CHECK_UNIQUE_POINTER(_tmp_sealed_mc_result, _len_sealed_mc_result);
 	CHECK_UNIQUE_POINTER(_tmp_mc_value, _len_mc_value);
 
-	if (_tmp_sealed_mc_result != NULL) {
+	if (_tmp_sealed_mc_result != NULL && _len_sealed_mc_result != 0) {
 		_in_sealed_mc_result = (uint8_t*)malloc(_len_sealed_mc_result);
 		if (_in_sealed_mc_result == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -193,7 +193,7 @@ static sgx_status_t SGX_CDECL sgx_read_sealed_monotonic_counter(void* pms)
 
 		memcpy(_in_sealed_mc_result, _tmp_sealed_mc_result, _len_sealed_mc_result);
 	}
-	if (_tmp_mc_value != NULL) {
+	if (_tmp_mc_value != NULL && _len_mc_value != 0) {
 		_in_mc_value = (uint32_t*)malloc(_len_mc_value);
 		if (_in_mc_value == NULL) {
 			status = SGX_ERROR_OUT_OF_MEMORY;
@@ -218,10 +218,10 @@ err:
 
 static sgx_status_t SGX_CDECL sgx_get_size(void* pms)
 {
+	CHECK_REF_POINTER(pms, sizeof(ms_get_size_t));
 	ms_get_size_t* ms = SGX_CAST(ms_get_size_t*, pms);
 	sgx_status_t status = SGX_SUCCESS;
 
-	CHECK_REF_POINTER(pms, sizeof(ms_get_size_t));
 
 	ms->ms_retval = get_size();
 
@@ -476,7 +476,7 @@ sgx_status_t SGX_CDECL sgx_oc_cpuidex(int cpuinfo[4], int leaf, int subleaf)
 	if (cpuinfo != NULL && sgx_is_within_enclave(cpuinfo, _len_cpuinfo)) {
 		ms->ms_cpuinfo = (int*)__tmp;
 		__tmp = (void *)((size_t)__tmp + _len_cpuinfo);
-		memcpy(ms->ms_cpuinfo, cpuinfo, _len_cpuinfo);
+		memset(ms->ms_cpuinfo, 0, _len_cpuinfo);
 	} else if (cpuinfo == NULL) {
 		ms->ms_cpuinfo = NULL;
 	} else {
