@@ -5,23 +5,55 @@
 
 \include{dcr-preamble}
 \begin{document}
+	\section*{Framework}
+	\textbf{Failure model}: Byzantine failures with subsystems exhibiting only crashes (no key guessing)\\
 	\noindent
 	Workflow: $G=(V,E)$ \\
 	Activities: $V=\{v_1,\ \dots, v_n\}$ \\ %missing event states
 	Activity States: $S=\{s_1,\ \dots, s_n\}$, where $s_i \subseteq \{Executed, Pending, Included\}$\\
 	Relation ($E$): $R=($condition, response, milestone, include, exclude$)$, $e=(v_x, v_y, r_i)$, $E=\{e_1,\ \dots, e_m\}$\\
-	Actors: $P =\{$Alice ($A$), Bob ($B$)$\}$.\\
+	Actors: $P =\{$Alice ($A$), Bob ($B$)$\}$.\\ %(Deciders vs. witnesses)
 	History, $H_A(t)$, $H_B(t)$: Sequence of activity executions up to, and at time $t$, as perceived by $A$ and $B$, respectively.\\
 	Execution: $(v_i, t, p_i)$, where $v_i$ is the activity executed at time $t$, executed by actor $p_i$.\\
 	%History, $H(t)$: State of the entire workflow at time $t$
 
-	What we want to achieve:
+	\section*{Problem}
+	Ensure that two parties collaborating on a DCR graph, can execute the activities in the graph without requiring any degree of trust. We want to ensure fairness in the sense that each collaborator will be able to execute their relevant activities (in so far as they can do so according to the specific DCR graph), and that no collaborator can repudiate executions of activities (neither their own nor other parties').
+
+	\section*{Requirements}
 	\begin{description}
-		%\item[Concurrency]: If $H_A(t_1) = H_B(t_1)$
-		\item[Correctness]: Any DCR graph must 
-		\item  
+		\item[Consensus]:
+			\begin{description}
+				\item[Termination] Eventually each correct process sets its decision value (single activity state)
+				\item[Agreement] Decision vector = activity states
+								1. Eventual agreement: We can poll for an history, after which agreement on current state is reached.
+								2. Partial agreement: Bottom is allowed as substitute for any activity state (not if you're responsible for that activity)
+				\item[Integrity] If $p_i$ is correct, then all correct processes decide on $v_i$, or $\bot$ as the ith component of their vector.
+			\end{description}
+		\item[Concurrency]: DCR-rules for concurrency (only independent activities can be concurrent) (Tie-breaking)
+		\item[Correctness]: No activity state may violate the rules as described by DCR-logic, the states of activities and relations. (The state of the workflow)
+		\item[Non-repudiation]: $v_i$ must be provably proposed by $p_i$, within a negligible probability.
+		% \item[Co-non-repudiation?]:
 	\end{description}
-	$H_A(t) \subset H_A(t+1)$
-	No execution violates DCR rules
+
+	\section*{Scenarios}
+	\begin{description}
+		\item[Scenario 1] 
+			$A\crel B$\\
+			Alice must never decide $\bot$ for $A$. Bob must never decide $\bot$ for either $A$ or $B$.
+		\item[Scenario 2]
+			$A\crel B$, $A\crel C$\\
+			Alice, Bob and Charlie must always decide the same value for $A$.\\
+			Problem: Prevent Alice from telling Bob the state, but not Charlie. (Reduces to FLP.)
+		\item[Scenario 3]
+			$A\erel B$, $B\crel C$\\
+			Alice and Bob must agree on the state of $A$, Bob and Charlie must agree on the state of $B$, only Charlie must agree on the value of $C$.
+		\item[Scenario 4]
+			$A\erel B$, $B\erel A$\\
+			Both Alice and Bob must agree on both $A$ and $B$.\\
+			Problem: Concurrency.
+		
+			
+	\end{description}
 
 \end{document}
