@@ -1,0 +1,54 @@
+\documentclass{article}
+
+\begin{document}
+	\noindent
+	\textbf{Consensus}:\\
+	N processes: $p_1, p_2 \dots, p_n$\\
+	N proposed values: $\{v_1, v_2 \dots, v_n\}$, where each $v$ is a value from unspecified set $D$.
+	N decision variables: $\{d_1, d_2, \dots, d_n\}$
+	Process $p_i$ moves from \textit{undecided} state to \textit{decided} by proposing $v_i$ and setting $d_i$ s.t:\\
+	\begin{description}
+		\item[Termination]: Eventually each correct process sets its decision variable.
+		\item[Agreement]: The decision value of all correct processes is the same.
+		\item[Integrity]: If the correct processes all proposed the same value, then any correct process in the decided state has chosen that value.
+	\end{description}
+	
+	\noindent
+	\\\\\textbf{Distributed DCR (D-DCR)}:\\
+	Given the distributed DCR-graph $G$.
+	\begin{description}
+		\item[Consensus]:
+			\begin{description}
+				\item[Termination] Eventually each correct process sets its decision value (single activity state)
+				\item[Agreement] Decision vector = activity states
+								1. Eventual agreement: We can poll for an history, after which agreement on current state is reached.
+								2. Partial agreement: Bottom is allowed as substitute for any activity state (not if you're responsible for that activity)
+				\item[Integrity] If $p_i$ is correct, then all correct processes decide on $v_i$, or $\bot$ as the ith component of their vector.
+			\end{description}
+		\item[Concurrency]: DCR-rules for concurrency (only independent activities can be concurrent) (Tie-breaking)
+		\item[Correctness]: For a correct peer to propose a changed activity state, the new activity state must be the result of a valid activity execution in the last decided decision vector. We assume an agreed upon genesis state.
+		\item[Non-repudiation]: $v_i$ must be provably proposed by $p_i$, within a negligible probability.
+		% \item[Co-non-repudiation?]:
+	\end{description}
+
+	\noindent
+	\textbf{Reduction from D-DCR to consensus (no concurrency)}:\\
+	(Assume initial state is agreed upon)\\
+	Let $D$ be the set of possible decision vectors.\\
+	Any correct process will only choose a decision vector that is obtainable by executing an activity that is in an executable state in the last agreed upon decision vector. (Correctness)\\
+	% The decision vector must be proposed by an actor with execution rights of the 
+	Use consensus to decide on a possible execution.\\
+
+	\noindent
+	\textbf{Reduction from consensus to D-DCR}:\\
+	For each $v$ in $D$ create an activity $a$ in a DCR-graph.\\
+	Let all activities exclude all other activities (no concurrency).\\
+	All actors can execute all activities.
+	When a peer chooses a $v_i$, model this as trying to execute the corresponding $a_i$.
+	Run D-DCR.\\
+	When an execution is completed, set $d_i$ as the $v_i$ corresponding to the executed activity.
+
+		
+
+\end{document}
+	

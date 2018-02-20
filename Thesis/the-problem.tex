@@ -19,19 +19,23 @@
 
 	\section*{Problem}
 	Ensure that two parties collaborating on a DCR graph, can execute the activities in the graph without requiring any degree of trust. We want to ensure fairness in the sense that each collaborator will be able to execute their relevant activities (in so far as they can do so according to the specific DCR graph), and that no collaborator can repudiate executions of activities (neither their own nor other parties').
+	The resulting global state of the distributed executions must be a result of a valid execution sequence in the workflow.
+
+	1. There must be a happened-before relationship between an execution and the executions of its dependent activities
+	2. All serializations of the happened-before relationships must be valid execution sequences in DCR
 
 	\section*{Requirements}
 	\begin{description}
 		\item[Consensus]:
 			\begin{description}
 				\item[Termination] Eventually each correct process sets its decision value (single activity state)
-				\item[Agreement] Decision vector = activity states
+				\item[Agreement] Decision vector = activity state
 								1. Eventual agreement: We can poll for an history, after which agreement on current state is reached.
 								2. Partial agreement: Bottom is allowed as substitute for any activity state (not if you're responsible for that activity)
 				\item[Integrity] If $p_i$ is correct, then all correct processes decide on $v_i$, or $\bot$ as the ith component of their vector.
 			\end{description}
 		\item[Concurrency]: DCR-rules for concurrency (only independent activities can be concurrent) (Tie-breaking)
-		\item[Correctness]: No activity state may violate the rules as described by DCR-logic, the states of activities and relations. (The state of the workflow)
+		\item[Correctness]: The system must enforce the agreed-upon workflow, so that no party can obtain an advantage by acting out of turn or failing to fulfil an obligation to act.
 		\item[Non-repudiation]: $v_i$ must be provably proposed by $p_i$, within a negligible probability.
 		% \item[Co-non-repudiation?]:
 	\end{description}
@@ -52,7 +56,10 @@
 			$A\erel B$, $B\erel A$\\
 			Both Alice and Bob must agree on both $A$ and $B$.\\
 			Problem: Concurrency.
-		
+		\item[Scenario 5]
+			$A\irel C$, $A\irel D$, $B\erel C$, $B\erel D$\\
+			Both Alice and Bob must agree on only $A$ and $B$, respectively. Charlie must agree on everything except $D$, and Dahlia must agree on everything except $C$\\
+			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.
 			
 	\end{description}
 

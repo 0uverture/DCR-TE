@@ -2,6 +2,8 @@
 # Created by https://www.gitignore.io/api/latex
 
 main.pdf
+the-problem.pdf
+reduction-from-consensus.pdf
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
