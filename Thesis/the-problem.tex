@@ -5,42 +5,46 @@
 
 \include{dcr-preamble}
 \begin{document}
-	\section*{Framework}
-	\textbf{Failure model}: Byzantine failures with subsystems exhibiting only crashes (no key guessing)\\
-	\noindent
-	Workflow: $G=(V,E)$ \\
-	Activities: $V=\{v_1,\ \dots, v_n\}$ \\ %missing event states
-	Activity States: $S=\{s_1,\ \dots, s_n\}$, where $s_i \subseteq \{Executed, Pending, Included\}$\\
-	Relation ($E$): $R=($condition, response, milestone, include, exclude$)$, $e=(v_x, v_y, r_i)$, $E=\{e_1,\ \dots, e_m\}$\\
-	Actors: $P =\{$Alice ($A$), Bob ($B$)$\}$.\\ %(Deciders vs. witnesses)
-	History, $H_A(t)$, $H_B(t)$: Sequence of activity executions up to, and at time $t$, as perceived by $A$ and $B$, respectively.\\
-	Execution: $(v_i, t, p_i)$, where $v_i$ is the activity executed at time $t$, executed by actor $p_i$.\\
-	%History, $H(t)$: State of the entire workflow at time $t$
-
 	\section*{Problem}
 	Ensure that two parties collaborating on a DCR graph, can execute the activities in the graph without requiring any degree of trust. We want to ensure fairness in the sense that each collaborator will be able to execute their relevant activities (in so far as they can do so according to the specific DCR graph), and that no collaborator can repudiate executions of activities (neither their own nor other parties').
-	The resulting global state of the distributed executions must be a result of a valid execution sequence in the workflow.
+	The resulting global state of the distributed executions must be a result of a valid execution sequence in the workflow. % Global state er udefineret på det her tidspunkt.
 
-	1. There must be a happened-before relationship between an execution and the executions of its dependent activities
-	2. All serializations of the happened-before relationships must be valid execution sequences in DCR
+	% The system should support running a distributed DCR graph between multiple parties, under the assumption that any number of those parties will attempt to forge, collude, perjure or otherwise act maliciously.
+
+	\textbf{Failure model}: Byzantine failures with subsystems exhibiting only crashes (no key guessing)\\ % inkorperer i brødtekst
+
+	1. There must be a happened-before relationship between the execution of an activity and the executions of its dependent activities % Studer Lamports FSM
+	2. All serializations of the happened-before relationships must be valid execution sequences in DCR % Og opnå enighed om dem
+
+	\section*{Definitions}
+	\noindent
+	Workflow: $G=(V,E)$ \\
+	Activities: $V=\{v_1,\ \dots, v_n\}$ \\
+	Activity States: $S=\{s_1,\ \dots, s_n\}$, where $s_i \subseteq \{Executed, Pending, Included\}$ corresponding to V_i.\\
+	Relation: $R=($condition, response, milestone, include, exclude$)$, $e=(v_x, v_y, r_i)$, $E=\{e_1,\ \dots, e_m\}$\\
+	Actors: $P =\{p_1,\ \dots, p_o\}$.\\ %Processors i stedet for actors
+	History, $H_p(t)$: Sequence of activity executions up to, and at time $t$, as perceived by given actor.\\
+	Execution: $(v_i, t, p)$, where $v_i$ is the activity executed at time $t$, executed by actor $p$.\\
+	Dependant activities: ... \\
+	Processor: ... \\
+	Activity responsibility: ... \\
 
 	\section*{Requirements}
 	\begin{description}
 		\item[Consensus]:
 			\begin{description}
 				\item[Termination] Eventually each correct process sets its decision value (single activity state)
-				\item[Agreement] Decision vector = activity state
-								1. Eventual agreement: We can poll for an history, after which agreement on current state is reached.
-								2. Partial agreement: Bottom is allowed as substitute for any activity state (not if you're responsible for that activity)
-				\item[Integrity] If $p_i$ is correct, then all correct processes decide on $v_i$, or $\bot$ as the ith component of their vector.
+				\item[Partial agreement] % Decision vector = activity state
+								Bottom is allowed as substitute for any activity state, unless that activity is owned by process or dependant on one such process. % Hvad er agreement
+				\item[Integrity] If $p_i$ is correct, then all correct processes decide on $v_i$, or $\bot$ as the ith component of their vector. % Omformuler. Kan ikke genbruge i på den her måde
 			\end{description}
-		\item[Concurrency]: DCR-rules for concurrency (only independent activities can be concurrent) (Tie-breaking)
-		\item[Correctness]: The system must enforce the agreed-upon workflow, so that no party can obtain an advantage by acting out of turn or failing to fulfil an obligation to act.
-		\item[Non-repudiation]: $v_i$ must be provably proposed by $p_i$, within a negligible probability.
+		% \item[Concurrency]: DCR-rules for concurrency (only independent activities can be concurrent) (Tie-breaking). Nødvendig? Argumenter hvorfor Agreement + integrity giver concurrency løsning
+		\item[Correctness]: Any state transition must be permitted by DCR logic or they will be rejected by correct nodes.
+		\item[Non-repudiation]: $v_i$ must be provably proposed by $p_i$, within the bounds specified by any applied cryptography.
 		% \item[Co-non-repudiation?]:
 	\end{description}
 
-	\section*{Scenarios}
+	\section*{Scenarios} % Omformuleres til at bruge definitions.
 	\begin{description}
 		\item[Scenario 1] 
 			$A\crel B$\\
@@ -59,8 +63,6 @@
 		\item[Scenario 5]
 			$A\irel C$, $A\irel D$, $B\erel C$, $B\erel D$\\
 			Both Alice and Bob must agree on only $A$ and $B$, respectively. Charlie must agree on everything except $D$, and Dahlia must agree on everything except $C$\\
-			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.
-			
+			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.			
 	\end{description}
-
 \end{document}
