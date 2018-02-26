@@ -6,15 +6,11 @@
 \include{dcr-preamble}
 \begin{document}
 	\section*{Problem}
-	Ensure that two parties collaborating on a DCR graph, can execute the activities in the graph without requiring any degree of trust. We want to ensure fairness in the sense that each collaborator will be able to execute their relevant activities (in so far as they can do so according to the specific DCR graph), and that no collaborator can repudiate executions of activities (neither their own nor other parties').
-	The resulting global state of the distributed executions must be a result of a valid execution sequence in the workflow. % Global state er udefineret på det her tidspunkt.
+	The system should support running a distributed DCR graph between multiple parties, under the assumption that any number of those parties will attempt to forge, collude, perjure or otherwise act maliciously, i. e. exhibiting byzantine failures.
+	These distributed DCR graphs should always be accessible by all parties, connectivity permitting, and transparency must be ensured for all parties, in that they should always be aware of whether or not activities controlled by that party can be executed at any given time.
 
-	% The system should support running a distributed DCR graph between multiple parties, under the assumption that any number of those parties will attempt to forge, collude, perjure or otherwise act maliciously.
-
-	\textbf{Failure model}: Byzantine failures with subsystems exhibiting only crashes (no key guessing)\\ % inkorperer i brødtekst
-
-	1. There must be a happened-before relationship between the execution of an activity and the executions of its dependent activities % Studer Lamports FSM
-	2. All serializations of the happened-before relationships must be valid execution sequences in DCR % Og opnå enighed om dem
+	% 1. There must be a happened-before relationship between the execution of an activity and the executions of its dependent activities % Studer Lamports FSM
+	% 2. All serializations of the happened-before relationships must be valid execution sequences in DCR % Og opnå enighed om dem
 
 	\section*{Definitions}
 	\noindent
@@ -22,12 +18,12 @@
 	Activities: $V=\{v_1,\ \dots, v_n\}$ \\
 	Activity States: $S=\{s_1,\ \dots, s_n\}$, where $s_i \subseteq \{Executed, Pending, Included\}$ corresponding to V_i.\\
 	Relation: $R=($condition, response, milestone, include, exclude$)$, $e=(v_x, v_y, r_i)$, $E=\{e_1,\ \dots, e_m\}$\\
-	Actors: $P =\{p_1,\ \dots, p_o\}$.\\ %Processors i stedet for actors
-	History, $H_p(t)$: Sequence of activity executions up to, and at time $t$, as perceived by given actor.\\
-	Execution: $(v_i, t, p)$, where $v_i$ is the activity executed at time $t$, executed by actor $p$.\\
-	Dependant activities: ... \\
-	Processor: ... \\
-	Activity responsibility: ... \\
+	Processes: $P =\{p_1,\ \dots, p_o\}$.\\
+	History, $H_p(t)$: Sequence of activity executions up to, and at time $t$, as perceived by given process.\\
+	Execution: $(v_i, t, p)$, where $v_i$ is the activity executed at time $t$, executed by process $p$.\\
+	Dependant activities: An activity, $v_1$ is said to be dependant on another activity, $v_2$, when the DCR rules allowing $v_1$ to be executed, depends on the state of $v_2$. \\
+	% Processor: $C$ is said to own a number of specific processes. Any process can only be owned by a single processor. \\
+	% Activity responsibility: ... \\
 
 	\section*{Requirements}
 	\begin{description}
