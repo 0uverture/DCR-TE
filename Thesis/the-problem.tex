@@ -65,4 +65,18 @@
 			Both Alice and Bob must agree on only $A$ and $B$, respectively. Charlie must agree on everything except $D$, and Dahlia must agree on everything except $C$\\
 			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.			
 	\end{description}
+
+
+	\section{The algorithm}
+	Consider the events A, B and C, where A has relation AB to B, and B has relation BC to C.\\
+	When A is executed:\\
+	B must be locked if:\\
+	AB is an effect (include, exclude, response)\\
+	C must be locked if:\\
+	AB is a constraining effect, and BC is a constraint (condition, milestone), in the following configuration:\\
+	\begin{itemize}
+		\item $A \irel B \crel C$ (B is excluded)
+		\item $A \irel B \mrel C$ (B is excluded and pending)
+		\item $A \rrel B \mrel C$ (B is not pending)
+	\end{itemize}
 \end{document}
