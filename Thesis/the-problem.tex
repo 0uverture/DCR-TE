@@ -68,7 +68,7 @@
 	\begin{description}
 		\item[1: Exclude-include] $A \erel D, A \irel C, B \erel C, B \irel D$
 		\item[2: Include condition] $A \irel C, C \crel B, B \irel D, D \crel A$ where $C$ and $D$ are excluded. 
-		\item[3: Non-modifying to condition] $A \irel C, C \crel B, B \irel D, D \crel A$ where $D$ is excluded. 
+		\item[3: Non-modifying to condition] $A \irel C, C \crel B, B \irel D, D \crel A, E \erel C$ where $D$ is excluded. 
 	\end{description}
 
 	\noindent There are three ways of locking when executing:
@@ -76,11 +76,25 @@
 	\begin{description}
 		\item[2 degrees back] has the disadvantage that notifications have to be pushed independently of locking. This locking does not work for graph 1, as A and B do not need to acquire locks on C and D. This means that the end state is subject to race conditions.
 		\item[All adjacent] notifications need to be pushed in the second degree ocasionally (graph 2). 
-		\item[2 degrees forward] has the inherent advantage of notifying relevant activities on execution. In graph 3, an execution of $A$ would only require locking on C, as opposed to the All adjacent locking scheme, which would require that D should be locked as well.
+		\item[2 degrees forward] has the inherent advantage of notifying relevant activities on execution. In graph 3, an execution of $A$ would only require locking on C, as opposed to the \emph{All adjacent locking} scheme, which would require that D should be locked as well.
 	\end{description}
 
+	It seems that, given the state of all relevant nodes, the locking mechanism described as \emph{2 degrees forward} minimizes the amount of locks needed for any execution.
+	This optimization is, however, only possible when the state of $C$ is known and since locking is only performed forwards, there is no implicit way to propogate executions backwards.
+	This means that $A$ does not know the state of $C$ on execution and would have to do one of two options when executing:
+	\begin{itemize}
+		\item $A$ sends a locking message to $C$, telling it to lock $B$ if necessary.
+		\item $A$ sends a locking message to $C$ and one to $B$, but gives $B$ the option to forego locking if the state of $C$ would be unchanged by the execution of $A$.
+	\end{itemize}
+	Both options result in the minimum amount of locks, but the first option has fewer messages, as it only results in two messages.
+	However, the first option has the disadvantage of potentially taking twice as long, assuming that transporting a message between $A$ and $C$ takes the same amount of time as between $A$ and $B$.
+	
+
+
+	trade-off besked vs. låse vs. round-trips
+
 	\section{The algorithm}
-	Consider the events A, B and C, where A has relation AB to B, and B has relation BC to C.\\
+	Consider the events A, B and C, where A has relation AB to B, and B has relation BC to C.\\	
 	When A is executed:\\
 	B must be locked if:\\
 	AB is an effect (include, exclude, response)\\
