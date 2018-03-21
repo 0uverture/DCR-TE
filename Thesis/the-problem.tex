@@ -42,7 +42,7 @@
 
 	\section*{Scenarios} % Omformuleres til at bruge definitions.
 	\begin{description}
-		\item[Scenario 1] 
+		\item[Scenario 1]
 			$A\crel B$\\
 			Alice must never decide $\bot$ for $A$. Bob must never decide $\bot$ for either $A$ or $B$.
 		\item[Scenario 2]
@@ -59,23 +59,22 @@
 		\item[Scenario 5]
 			$A\irel C$, $A\irel D$, $B\erel C$, $B\erel D$\\
 			Both Alice and Bob must agree on only $A$ and $B$, respectively. Charlie must agree on everything except $D$, and Dahlia must agree on everything except $C$\\
-			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.			
+			Problem: Concurrency (expanded), not serially equivalent if $C$ is included and $D$ is excluded after $A$ and $B$ have executed concurrently.
 	\end{description}
 
-
 	\section*{Locking}
-	
+
 	\begin{description}
 		\item[1: Exclude-include] $A \erel D, A \irel C, B \erel C, B \irel D$
-		\item[2: Include condition] $A \irel C, C \crel B, B \irel D, D \crel A$ where $C$ and $D$ are excluded. 
-		\item[3: Non-modifying to condition] $A \irel C, C \crel B, B \irel D, D \crel A, E \erel C$ where $D$ is excluded. 
+		\item[2: Include condition] $A \irel C, C \crel B, B \irel D, D \crel A$ where $C$ and $D$ are excluded.
+		\item[3: Non-modifying to condition] $A \irel C, C \crel B, B \irel D, D \crel A, E \erel C$ where $D$ is excluded.
 	\end{description}
 
 	\noindent There are three ways of locking when executing:
 
 	\begin{description}
 		\item[2 degrees back] has the disadvantage that notifications have to be pushed independently of locking. This locking does not work for graph 1, as A and B do not need to acquire locks on C and D. This means that the end state is subject to race conditions.
-		\item[All adjacent] notifications need to be pushed in the second degree ocasionally (graph 2). 
+		\item[All adjacent] notifications need to be pushed in the second degree ocasionally (graph 2).
 		\item[2 degrees forward] has the inherent advantage of notifying relevant activities on execution. In graph 3, an execution of $A$ would only require locking on C, as opposed to the \emph{All adjacent locking} scheme, which would require that D should be locked as well.
 	\end{description}
 
@@ -88,18 +87,44 @@
 	\end{itemize}
 	Both options result in the minimum amount of locks, but the first option has fewer messages, as it only results in two messages.
 	However, the first option has the disadvantage of potentially taking twice as long, assuming that transporting a message between $A$ and $C$ takes the same amount of time as between $A$ and $B$.
-	
 
-
-	trade-off besked vs. låse vs. round-trips
+	% trade-off besked vs. låse vs. round-trips
 
 	\section{The algorithm}
-	Consider the events A, B and C, where A has relation AB to B, and B has relation BC to C.\\	
-	When A is executed:\\
-	B must be locked if:\\
-	AB is an effect (include, exclude, response)\\
-	C must be locked if:\\
-	AB is a constraining effect, and BC is a constraint (condition, milestone), in the following configuration:\\
+	Consider the activities $A$, $B$ and $C$, where $A$ has relation $AB$ to $B$, and $B$ has relation $BC$ to $C$.
+	We will describe the algorithm under the maximally distributed case where each activity is handled by a separate peer.
+	For simplicity i.e. $A$ will refer to both the activity and the peer responsible for it.
+	% We will show that this workflow is enough to describe a general algorithm when $A$ is executed.
+
+	% Effects must push execution state
+	When $AB$ is an effect ($A\irel B$, $A\erel B$, $A\rrel B$), $B$ must be informed of any execution of $A$.
+	To see this is the case, consider the workflow $(\{D, E, F\}, \{D\erel F, E\irel F\})$.
+	As $F$ is not immediately informed about executions of $D$ and $E$, an execution attempt at $F$ must query $D$ and $E$ to determine the inclusion state of $F$.
+	Such a query would require an ordering of executions of $D$ and $E$, which is not generally possible in an asynchronous setting.
+
+	% AB effects must synchronize
+	Further, when $AB$ is an effect, some degree of synchronization must occur between a subset of peers.
+	To see this is the case, consider the workflow $(\{D, D', E, E'\}, \{D\irel E, D\erel E', D'\erel E, D'\irel E\})$.
+	We showed executions must be propagated along effects in an asynchronous setting.
+	Thus when executing $D$ and $D'$, messages $M_{D\irel E}$, $M_{D\erel E'}$, $M_{D'\erel E}$ and $M_{D'\irel E'}$ are required.
+	The ordering of these messages can not generally be guaranteed in an asynchronous setting.
+	To see why synchronization must occur, consider the message arrival sequence $(M_{D\irel E}, M_{D'\erel E}, M_{D'\irel E'}, M_{D\erel E'})$, resulting in an invalid workflow state where both $E$ and $E'$ are excluded.
+
+	% Execute A, lock B
+	% Execute B, lock A
+
+	% AB effects, BC constaints must synchronize
+	When $AB$ is an effect and $BC$ is a constraint ($B\crel C, B\mrel C$),
+
+	% Forward locking
+	% Backward locking
+	% Foward-backward locking
+
+	When $A$ is executed:\\
+	$B$ must be locked if:\\
+	$AB$ is an effect (include, exclude, response)\\
+	$C$ must be locked if:\\
+	$AB$ is a constraining effect, and $BC$ is a constraint (condition, milestone), in the following configuration:\\
 	\begin{itemize}
 		\item $A \irel B \crel C$ (B is excluded)
 		\item $A \irel B \mrel C$ (B is excluded and pending)
