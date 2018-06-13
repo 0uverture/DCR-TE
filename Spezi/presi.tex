@@ -49,12 +49,66 @@
     
 \end{frame}
 
-\begin{frame}{Trusted DCR protocol}%malthe
-    
+\begin{frame}{Trusted DCR}{Raft}%malthe
+  \begin{itemize}
+    \item Variant of multi-Paxos
+    \begin{itemize}
+      \item Crash-failures
+      \item $n = 2f+1$
+    \end{itemize}
+
+    \vfill
+
+    \item Election
+    \begin{itemize}
+      \item Triggered by semi-random timeout
+      \item Single winner or stalemate
+    \end{itemize}
+
+    \vfill
+
+    \item Leadership
+    \begin{itemize}
+      \item Accept client commands
+      \item 2 phase commit with quorum
+    \end{itemize}
+  \end{itemize}
+
+  % Raft
+  % Overlay algorithm
+  % Correctness figure
+\end{frame}
+
+\begin{frame}{Trusted DCR}{Protocol}%malthe
+  \begin{itemize}
+    \item Entirely defined as modified Raft leader behavior
+    \item Three command types: \textbf{\texttt{LOCK}}, \textbf{\texttt{EXEC}} and \textbf{\texttt{ABORT}}
+
+    \vfill
+
+    \item Leader algorithm
+    \begin{enumerate}
+      \item Client commands \textbf{\texttt{LOCK}}
+      \item Leader commits \textbf{\texttt{LOCK}} in quorum
+      \item Leader commands \textbf{\texttt{LOCK}} in lock-set
+      \begin{itemize}
+        \item Unanimous ACK: Leader commits and commands \textbf{\texttt{EXEC}} in quorum and lock-set
+        \item Single NACK: Leader commits and commands \textbf{\texttt{ABORT}} in quorum and lock-set
+      \end{itemize}
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Trusted DCR}{Termination}%malthe
+  \vfill
+  \includegraphics[width=\textwidth]{figures/raft-2pc.pdf}
+  \vfill
 \end{frame}
 
 \begin{frame}{Implementation}%Malthe
-    
+  \vfill
+  \includegraphics[width=\textwidth]{figures/network-stack.pdf}
+  \vfill
 \end{frame}
 
 \begin{frame}{Demo}%Malthe
