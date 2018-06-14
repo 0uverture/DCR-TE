@@ -11,6 +11,24 @@
 
 \usetheme{metropolis}
 
+
+% \setbeamertemplate{framesubtitle}{%
+%      \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=6ex,left]{framesubtitle}%
+%        \hspace*{2ex}\insertframesubtitle%
+%      \end{beamercolorbox}} 
+\def \emptysubtitle {}
+\setbeamercolor{framesubtitle}{}
+\addtobeamertemplate{frametitle}{}{%
+  \ifx\insertframesubtitle \emptysubtitle%
+  \else%
+	\vspace*{-1ex}
+  \usebeamerfont{framesubtitle}%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2ex,dp=2ex,left]{framesubtitle}%
+	 	\hspace*{2.67ex}\insertframesubtitle%
+	\end{beamercolorbox}%
+  \fi%
+}
+
 \begin{document}
 \maketitle
 
@@ -59,6 +77,12 @@
 	% relations (directed edges)
 	% eksempel
 	% concurrency
+\end{frame}
+
+\begin{frame}{Dynamic Condition Response graphs}{Concurrency}
+	\begin{itemize}
+  	\item 
+  \end{itemize}    
 \end{frame}
 
 \begin{frame}{Intel Software Guard Extensions}{SGX}%frederik
