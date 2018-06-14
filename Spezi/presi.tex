@@ -1,5 +1,8 @@
 \documentclass{beamer}
+
 \usepackage{lmodern}
+\usepackage{booktabs}
+
 \beamertemplatenavigationsymbolsempty
 
 \title{Trusted DCR: Decentralised workflow management in a byzantine setting}
@@ -239,15 +242,72 @@
 \end{frame}
 
 \begin{frame}{Execution ordering}%mikkel
-    
+	\centering
+    \includegraphics[scale=0.5]{figures/race-condition.pdf}
+    \vspace{\fill}
+    \begin{itemize}
+    	\item $N_{out}(e)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Enabledness}%mikkel
+	\centering
+    \includegraphics[scale=0.5]{figures/second-degree-effect.pdf}
+    \vspace{\fill}
+    \begin{itemize}
+    	\item $N_{out}(e) \cup N_{in}(e)$
+    	\item $N_{out}(N_{out}(e)) \cup N_{out}(e)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Minimizing ordering}%mikkel
+	\centering
+    \includegraphics[scale=0.5]{figures/second-degree-no-effect.pdf}
+    \vspace{\fill}
+    \begin{itemize}
+    	\item $N_{out}(e) \cup N_{in}(e)$
+    	\item $N_{out}(N_{out}(e)) \cup N_{out}(e)$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Global history collection}%mikkel    
+    \begin{itemize}
+    	\item Collect observed executions
+    \end{itemize}
+    \vspace{\fill}
+    \centering
+    \includegraphics[scale=0.5]{figures/inconsistent-cut.pdf}
+\end{frame}
+
+\begin{frame}{Carving a consistent cut}    
+	\centering
+    \includegraphics[scale=0.6]{figures/consistent-cut.pdf}
+\end{frame}
+
+\begin{frame}{Topological Order}
+    \centering
+    \includegraphics[scale=0.7]{figures/cut-graph.pdf}
+    \vspace{\fill}
+    \begin{itemize}
+    	\item RPO-DFS
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Cluster consensus}%mikkel
-	
-\end{frame}
-
-\begin{frame}{Global history collection}%mikkel
-    
+\resizebox{\textwidth}{!}{
+	\begin{tabular}{l p{3cm} p{1.5cm} l p{1.7cm}}
+        \toprule
+    	\textbf{Algorithm} 								& \textbf{FT: liveness} & \textbf{Recovery} & \textbf{Msgs/execution}  & \textbf{FT} \\
+        \midrule
+    	PBFT               	& $f = \lfloor \frac{n-1}{3} \rfloor$ & $(2f+1)^2$              & $(2f+1)+(2f+1)^2$            & Byzantine 				     \\
+    	MinBFT           	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $(f+1)^2$               & $2(f+1)+(f+1)^2$             & Byzantine 				     \\
+    	FastBFT           	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $(f+1)^2$               & $4(f+1)$                     & Byzantine 				     \\
+    	Chandra-Toueg    	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $0$                     & $4(f+1)+(f+1)^2$             & Crash                         \\
+    	Paxos  				& $f = \lfloor \frac{n-1}{2} \rfloor$ & $0$                     & $4(f+1) + 2$                 & Crash                         \\
+    	Raft               	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $2(f+1)$                & $2(f+1)$                     & Crash                         \\
+        \bottomrule
+	\end{tabular}
+	}
 \end{frame}
 
 \begin{frame}{Trusted DCR}{Raft}%malthe
@@ -325,7 +385,21 @@
 \end{frame}
 
 \begin{frame}{Smart Contracts}%mikkel
-    
+    \begin{itemize}
+    	\item Events containing arbitrary state.
+    	\item Effects changing arbitrary state.
+    	\item Constraints checking arbitrary state.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Simple DAO}
+	\centering
+	\includegraphics[scale=0.5]{figures/dao-simple.pdf}
+\end{frame}
+
+\begin{frame}{Parametrised DAO}
+	\centering
+	\includegraphics[scale=0.5]{figures/dao-parametrised.pdf}	
 \end{frame}
 
 \begin{frame}{Summary}%mikkel
