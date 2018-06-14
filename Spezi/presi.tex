@@ -17,9 +17,12 @@
 %        \hspace*{2ex}\insertframesubtitle%
 %      \end{beamercolorbox}} 
 \def \emptysubtitle {}
-\setbeamercolor{framesubtitle}{}
 \addtobeamertemplate{frametitle}{}{%
   \ifx\insertframesubtitle \emptysubtitle%
+	\vspace*{-6ex}
+  \begin{beamercolorbox}[wd=\paperwidth,ht=5ex,dp=3ex,left]{frametitle}%
+	 	\hspace*{2ex}\insertframetitle%
+	\end{beamercolorbox}%
   \else%
 	\vspace*{-1ex}
   \usebeamerfont{framesubtitle}%
@@ -81,8 +84,33 @@
 
 \begin{frame}{Dynamic Condition Response graphs}{Concurrency}
 	\begin{itemize}
-  	\item 
-  \end{itemize}    
+  	\item Three independence relations:
+  	\begin{itemize}
+  		\item Dynamic independency:
+  		\begin{itemize}
+  			\item In given graph state $G$: $E(E(G, e_1),e_2)=E(E(G, e_2),e_1)$.
+  		\end{itemize}
+
+			\vfill
+
+  		\item Static independency:
+  		\begin{itemize}
+  			\item Dynamic dependency in any \textit{reachable} state of $G$.
+  		\end{itemize}
+
+			\vfill
+
+			\item Approximate static independency:
+			\begin{itemize}
+			 	\item Dynamic dependency for \textit{any} state of $G$.
+			 	\item Seems harder, but is easier, because it can be calculated only using the relation, disregarding the events' state.
+			\end{itemize} 
+  	\end{itemize}
+
+			\vfill
+
+		\item We want to support dynamic independency because it allows for more concurrency.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Intel Software Guard Extensions}{SGX}%frederik
