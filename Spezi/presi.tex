@@ -1,15 +1,19 @@
 \documentclass{beamer}
 \usepackage{lmodern}
+\beamertemplatenavigationsymbolsempty
 
 \title{Trusted DCR: Decentralised workflow management in a byzantine setting}
 \author{Mikkel Gaub \and Malthe Ettrup Kirkbro \and Mads Frederik Madsen}
 \date{June 21, 2018}
+
+\usetheme{metropolis}
 
 \begin{document}
 \maketitle
 
 \begin{frame}{Introduction}%frederik
 %contributions
+%
     \begin{itemize}
     	\item 
     \end{itemize}
@@ -22,19 +26,216 @@
 \end{frame}
 
 \begin{frame}{Problem}%frederik
+\begin{itemize}
+	\item Create a scalable, fault tolerant decentralised DCR engine.
+\end{itemize}
+	% skriv problem
+	% kontekstualisér
+\end{frame}
+
+\begin{frame}{Dynamic Condition Response graphs}{Basics}%frederik
+\begin{tabular}{lc}
+  \parbox{0.5\linewidth}{\begin{itemize}
+		\item Declarative graph representation of a workflow
+		\item Consists of:
+		\begin{itemize}
+			\item Events: nodes representing possible events and actions of the workflow
+			\item Relations: directed edges representing constraints and effects in the workflow
+		\end{itemize}
+	\end{itemize}
+	}
+	&
+  \parbox{0.5\linewidth}{
+	\begin{figure}[p]
+		\includegraphics[scale=0.08]{figures/example6.png}
+	\end{figure}
+	}
+\end{tabular}
+	% Workflow 
+	% events
+	% relations (directed edges)
+	% eksempel
+	% concurrency
+\end{frame}
+
+\begin{frame}{Intel Software Guard Extensions}{SGX}%frederik
+	\begin{itemize}
+		\item Hardware-based Trusted Execution Environment
+		\begin{itemize}
+			\item Protected CPU-instructions
+			\item Protected cryptographic keys in fuse arrays
+		\end{itemize}
+
+		\vfill
+
+		\item Enclaves:
+		\begin{itemize}
+			\item Isolated memory and process
+			\item Guaranteed integrity and confidentiality of enclave (by Intel)
+		\end{itemize}
+
+		\vfill
+
+		\item Attestation:
+			\begin{itemize}
+				\item Local: Allows enclave process to verify if other local processes are running in identical enclave
+				\item Remote: Allows enclave process to verify if other remote processes are running in identical enclave
+			\end{itemize}
+	\end{itemize}
+	% Integrity protection
+	% Confidentiality protection
+  % Remote attestation
+\end{frame}
+
+\begin{frame}{Intel Software Guard Extensions}{Integrity}
+    \begin{itemize}
+    	\item Integrity is guaranteed by:
+
+			\vfill
+  			
+    	\begin{itemize}
+    		\item Enclave mode (process bit) %SECS?
+
+  			\vfill
+  			
+    		\item Processor Reserved Memory (PRM)
+
+  			\vfill
+  			
+    		\item Enclave Page Cache (EPC)
+
+  			\vfill
+
+    		\item Cryptographically signed when on persistent storage
+
+  			\vfill
+  			
+    		\item Merkle-Tree of MACs of memory, with root in processor internal memory
+    	\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Intel Software Guard Extensions}{Confidentiality}
+    \begin{itemize}
+    	\item Confidentiality is guaranteed by
+
+			\vfill
+  			
+    	\begin{itemize}
+    		\item Enclave mode (process bit)
+
+  			\vfill
+  			
+    		\item Processor Reserved Memory (PRM)
+
+  			\vfill
+  			
+    		\item Enclave Page Cache (EPC)
+
+  			\vfill
+
+    		\item Encrypted memory
+    	\end{itemize}
+    \end{itemize}
+\end{frame}
+
+% \begin{frame}{Intel Software Guard Extensions}{Local attestation}
     
+% \end{frame}
+
+\begin{frame}{Intel Software Guard Extensions}{Remote attestation}
+    \begin{itemize}
+    	\item Remote attestation allows remote processes to verify if they are running the same enclave:
+    	\begin{itemize}
+
+  			\vfill
+
+    		\item Requires an EPID private key
+    		\begin{itemize}
+    			\item One public key, many private keys
+    			\item Intel provisions this key during first SGX run 
+    		\end{itemize}
+
+  			\vfill
+
+    		\item Special rights enclave (Quoting Enclave) locally attests enclave
+
+  			\vfill
+
+    		\item Upon successful attestation, QE signs the local attestation with EPID private key
+
+  			\vfill
+
+    		\item When received by a remote enclave, the attestation will uniquely identify the enclave, and the signature will prove that a QE has locally attested it.
+
+  			\vfill
+
+  			\item In practise, remote attestation also requires contact to an Intel server, for revocation of leaked private keys 
+    	\end{itemize}
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{DCR}%frederik
-	
+\begin{frame}{Transforming byzantine faults}{Idea} %Frederik
+  \begin{itemize}
+  	\item Given integrity, confidentiality and remote attestation from SGX
+
+  	\vfill
+
+  	\item We can make a transformation of distributed protocols
+
+  	\vfill
+
+  	\item Crash-fault tolerant to byzantine fault tolerant
+  	\begin{itemize}
+  		\item Must handle unreliable channels
+  	\end{itemize}
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Intel Software Guard Extensions}%frederik
-	
+\begin{frame}{Transforming byzantine faults}{Intuition}
+	\begin{itemize}
+		\item Intuition: Integrity protects enclaves from experiencing byzantine faults.
+
+  	\vfill
+
+		\item Intuition: Confidentiality protects enclaves from other, byzantine components.
+
+  	\vfill
+
+		\item Intuition: With a byzantine protected subprocess, other subprocesses can be protected through that.
+
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{Transforming byzantine faults} %Frederik
-    
+\begin{frame}{Transforming byzantine faults}{Simple overview}
+	\begin{itemize}
+		\item Run the core of the protocol in an SGX enclave
+
+  	\vfill
+
+		\item Add message passing subprocesses outside the enclave
+
+  	\vfill
+
+		\item Provision enclaves with symmetric key through remote attestation.
+
+  	\vfill
+
+		\item MAC each sent message with the shared key
+
+  	\vfill
+
+		\item Verify MAC upon receival of message
+
+  	\vfill
+
+		\item Integrity guarantees that the enclave does not sign message after experiencing byzantine fault.
+
+  	\vfill
+
+  	\item Confidentiality guarantees that other components cannot access the shared key.
+
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Execution ordering}%mikkel
