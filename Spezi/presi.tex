@@ -326,44 +326,56 @@
 \end{frame}
 
 \begin{frame}{Execution ordering}{Race condition}%mikkel
+	\begin{itemize}
+		\item Ordering is needed when executions affect the same state
+	\end{itemize}
+	\vspace{\fill}
 	\centering
     \includegraphics[scale=0.5]{figures/race-condition.pdf}
     \vspace{\fill}
     \begin{itemize}
-    	\item $N_{out}(e)$
+    	\item First degree out: $N_{out}(e) \cup e$
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Execution ordering}{Enabledness}%mikkel
+	\begin{itemize}
+		\item Ordering is needed when enabledness is affected
+	\end{itemize}
+	\vspace{\fill}
 	\centering
     \includegraphics[scale=0.5]{figures/second-degree-effect.pdf}
     \vspace{\fill}
     \begin{itemize}
-    	\item $N_{out}(e) \cup N_{in}(e)$
-    	\item $N_{out}(N_{out}(e)) \cup N_{out}(e)$
+    	\item First degree: $N_{out}(e) \cup N_{in}(e) \cup e$
+    	\item Second degree out: $N_{out}(N_{out}(e)) \cup N_{out}(e) \cup e$
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Execution ordering}{Minimizing}%mikkel
+	\begin{itemize}
+		\item Second degree out has advantages with regards to optimization
+	\end{itemize}
+	\vspace{\fill}
 	\centering
     \includegraphics[scale=0.5]{figures/second-degree-no-effect.pdf}
     \vspace{\fill}
     \begin{itemize}
-    	\item $N_{out}(e) \cup N_{in}(e)$
-    	\item $N_{out}(N_{out}(e)) \cup N_{out}(e)$
+    	\item First degree: $N_{out}(e) \cup N_{in}(e) \cup e$
+    	\item Second degree out: $N_{out}(N_{out}(e)) \cup N_{out}(e) \cup e$
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Global history}{Collection}%mikkel
     \begin{itemize}
-    	\item Collect observed executions
+    	\item Observed executions returned from each event
     \end{itemize}
     \vspace{\fill}
     \centering
     \includegraphics[scale=0.5]{figures/inconsistent-cut.pdf}
 \end{frame}
 
-\begin{frame}{Global history}{Carving}
+\begin{frame}{Global history}{Consistent cut}
 	\centering
     \includegraphics[scale=0.6]{figures/consistent-cut.pdf}
 \end{frame}
@@ -373,7 +385,8 @@
     \includegraphics[scale=0.7]{figures/cut-graph.pdf}
     \vspace{\fill}
     \begin{itemize}
-    	\item RPO-DFS
+    	\item Topological order with arbitrary tie-breaking on cycles.
+    	\item Valid runs: $(C_1, F_1)$ or $(F_1, C_1)$
     \end{itemize}
 \end{frame}
 
@@ -528,6 +541,8 @@ void recv_append_req(append_req_t req) {
     	\item Effects changing arbitrary state
     	\vfill
     	\item Constraints checking arbitrary state
+    	\vfill
+    	\item The DAO
     \end{itemize}
 \end{frame}
 
@@ -542,7 +557,10 @@ void recv_append_req(append_req_t req) {
 \end{frame}
 
 \begin{frame}{Summary}%mikkel
-
+	\begin{itemize}
+		\item Relies on Intel hardware, code and secrecy
+		\item Requires TPM on all clients
+	\end{itemize}
 \end{frame}
 
 \end{document}
