@@ -2,7 +2,7 @@
 
 \usepackage{lmodern}
 \usepackage{booktabs}
-
+\usepackage{listings}
 \beamertemplatenavigationsymbolsempty
 
 \title{~\\ ~\\ ~\\ Trusted DCR: Decentralised workflow management in a byzantine setting}
@@ -34,13 +34,13 @@
 %contributions
 %
     \begin{itemize}
-    	\item 
+    	\item
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Overview}%frederik
 	\begin{itemize}
-		\item 
+		\item
 	\end{itemize}
 \end{frame}
 
@@ -52,13 +52,13 @@
 
 	\begin{itemize}
 		\item High degree of concurrency.
-	
+
 		\vfill
 
 		\item Scalable (less than $O(n)$ messages per execution).
-	
+
 		\vfill
-		
+
 		\item Byzantine fault tolerant.
 	\end{itemize}
 \end{itemize}
@@ -80,11 +80,11 @@
 	&
   \parbox{0.5\linewidth}{
 	\begin{figure}[p]
-		\includegraphics[scale=0.08]{figures/example6.png}
+		% \includegraphics[scale=0.08]{figures/example6.png}
 	\end{figure}
 	}
 \end{tabular}
-	% Workflow 
+	% Workflow
 	% events
 	% relations (directed edges)
 	% eksempel
@@ -113,7 +113,7 @@
 			\begin{itemize}
 			 	\item Dynamic independency for \textit{any} state of $G$.
 			 	\item Seems harder, but is easier, because it can be calculated only using the relationa, disregarding the events' state.
-			\end{itemize} 
+			\end{itemize}
   	\end{itemize}
 
 			\vfill
@@ -156,16 +156,16 @@
     	\item Integrity is guaranteed by:
 
 			\vfill
-  			
+
     	\begin{itemize}
     		\item Enclave mode (process bit) %SECS?
 
   			\vfill
-  			
+
     		\item Processor Reserved Memory (PRM)
 
   			\vfill
-  			
+
     		\item Enclave Page Cache (EPC)
 
   			\vfill
@@ -173,7 +173,7 @@
     		\item Cryptographically signed when on persistent storage
 
   			\vfill
-  			
+
     		\item Merkle-Tree of MACs of memory, with root in processor internal memory
     	\end{itemize}
     \end{itemize}
@@ -184,16 +184,16 @@
     	\item Confidentiality is guaranteed by
 
 			\vfill
-  			
+
     	\begin{itemize}
     		\item Enclave mode (process bit)
 
   			\vfill
-  			
+
     		\item Processor Reserved Memory (PRM)
 
   			\vfill
-  			
+
     		\item Enclave Page Cache (EPC)
 
   			\vfill
@@ -204,7 +204,7 @@
 \end{frame}
 
 % \begin{frame}{Intel Software Guard Extensions}{Local attestation}
-    
+
 % \end{frame}
 
 \begin{frame}{Intel Software Guard Extensions}{Remote attestation}
@@ -217,7 +217,7 @@
     		\item Requires an EPID private key
     		\begin{itemize}
     			\item One public key, many private keys
-    			\item Intel provisions this key during first SGX run 
+    			\item Intel provisions this key during first SGX run
     		\end{itemize}
 
   			\vfill
@@ -234,7 +234,7 @@
 
   			\vfill
 
-  			\item In practise, remote attestation also requires contact to an Intel server, for revocation of leaked private keys 
+  			\item In practise, remote attestation also requires contact to an Intel server, for revocation of leaked private keys
     	\end{itemize}
     \end{itemize}
 \end{frame}
@@ -355,7 +355,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Global history}{Collection}%mikkel    
+\begin{frame}{Global history}{Collection}%mikkel
     \begin{itemize}
     	\item Collect observed executions
     \end{itemize}
@@ -364,7 +364,7 @@
     \includegraphics[scale=0.5]{figures/inconsistent-cut.pdf}
 \end{frame}
 
-\begin{frame}{Global history}{Carving}    
+\begin{frame}{Global history}{Carving}
 	\centering
     \includegraphics[scale=0.6]{figures/consistent-cut.pdf}
 \end{frame}
@@ -458,15 +458,68 @@
 \end{frame}
 
 \begin{frame}{Demo}%Malthe
-    
+
 \end{frame}
 
 \begin{frame}{Performance}%Malthe
-    
+
 \end{frame}
 
-\begin{frame}{Security}%Malthe
-    
+\begin{frame}{Security}{Known vulnerabilities}%Malthe
+  \begin{itemize}
+    \item Confidentiality
+    \begin{itemize}
+      \item Spectre exploit on SGX (SgxPectre)
+      \item Various leaks under data-dependent memory access
+    \end{itemize}
+
+    \vfill
+
+    \item Integrity
+    \begin{itemize}
+      \item Row hammer
+      \item Various physical attacks
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Security}{Pitfalls}%Malthe
+  \vfill
+  \begin{lstlisting}[language=C, basicstyle=\footnotesize\ttfamily, keywordstyle=\color{mLightBrown}]
+struct some_struct {
+  char a;
+  int b;
+}
+...
+some_struct s { 123, 999999 };
+OCALL(s);
+...
+  \end{lstlisting}
+  \vfill
+\end{frame}
+
+\begin{frame}[fragile]{Security}{Pitfalls}%Malthe
+  \vfill
+  \begin{lstlisting}[language=C, basicstyle=\footnotesize\ttfamily, keywordstyle=\color{mLightBrown}, commentstyle=\color{gray}]
+struct append_req_t {
+  ...
+  entry_t* entries;
+  uint32_t entries_n;
+  ...
+}
+
+// ECALL
+void recv_append_req(append_req_t req) {
+  // req.entries points to unprotected memory here
+
+  // copy entries to protected memory
+  entry_t* prot_entries = new entry_t[req.entries_n];
+  memcpy(prot_entries, req.entries,
+         sizeof(entry_t) * req.entries_n);
+  ...
+}
+  \end{lstlisting}
+  \vfill
 \end{frame}
 
 \begin{frame}{Smart contracts}{Transformation}%mikkel
@@ -482,13 +535,13 @@
 	\includegraphics[scale=0.5]{figures/dao-simple.pdf}
 \end{frame}
 
-\begin{frame}{Smart contracts}{Parametrised DAO}
+\begin{frame}{Smart contracts}{dao-parametrised DAO}
 	\centering
-	\includegraphics[scale=0.5]{figures/dao-parametrised.pdf}	
+	\includegraphics[scale=0.5]{figures/dao-parametrised.pdf}
 \end{frame}
 
 \begin{frame}{Summary}%mikkel
-    
+
 \end{frame}
 
 \end{document}
