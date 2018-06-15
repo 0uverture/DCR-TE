@@ -40,7 +40,19 @@
 
 \begin{frame}{Overview}%frederik
 	\begin{itemize}
-		\item
+\item Problem
+\item Intel Software Guard Extensions
+\item Transforming byzantine faults
+\item Dynamic Condition Response graphs
+\item Execution ordering
+\item Global history
+\item Cluster consensus
+\item Trusted DCR
+\item Implementation
+\item Demo
+\item Performance
+\item Security
+\item Smart contracts
 	\end{itemize}
 \end{frame}
 
@@ -51,75 +63,19 @@
 	\vfill
 
 	\begin{itemize}
-		\item High degree of concurrency.
+		\item High degree of concurrency
 
 		\vfill
 
-		\item Scalable (less than $O(n)$ messages per execution).
+		\item Scalable (less than $O(n)$ messages per execution)
 
 		\vfill
 
-		\item Byzantine fault tolerant.
+		\item Byzantine fault tolerant
 	\end{itemize}
 \end{itemize}
 	% skriv problem
 	% kontekstualisér
-\end{frame}
-
-\begin{frame}{Dynamic Condition Response graphs}{Basics}%frederik
-\begin{tabular}{lc}
-  \parbox{0.5\linewidth}{\begin{itemize}
-		\item Declarative graph representation of a workflow
-		\item Consists of:
-		\begin{itemize}
-			\item Events: nodes representing possible events and actions of the workflow
-			\item Relations: directed edges representing constraints and effects in the workflow
-		\end{itemize}
-	\end{itemize}
-	}
-	&
-  \parbox{0.5\linewidth}{
-	\begin{figure}[p]
-		% \includegraphics[scale=0.08]{figures/example6.png}
-	\end{figure}
-	}
-\end{tabular}
-	% Workflow
-	% events
-	% relations (directed edges)
-	% eksempel
-	% concurrency
-\end{frame}
-
-\begin{frame}{Dynamic Condition Response graphs}{Concurrency}
-	\begin{itemize}
-  	\item Three independence relations:
-  	\begin{itemize}
-  		\item Dynamic independency:
-  		\begin{itemize}
-  			\item In given graph state $G$: $E(E(G, e_1),e_2)=E(E(G, e_2),e_1)$.
-  		\end{itemize}
-
-			\vfill
-
-  		\item Static independency:
-  		\begin{itemize}
-  			\item Dynamic independency in any \textit{reachable} state of $G$.
-  		\end{itemize}
-
-			\vfill
-
-			\item Approximate static independency:
-			\begin{itemize}
-			 	\item Dynamic independency for \textit{any} state of $G$.
-			 	\item Seems harder, but is easier, because it can be calculated only using the relationa, disregarding the events' state.
-			\end{itemize}
-  	\end{itemize}
-
-			\vfill
-
-		\item We want to support dynamic independency because it allows for more concurrency.
-  \end{itemize}
 \end{frame}
 
 \begin{frame}{Intel Software Guard Extensions}{SGX}%frederik
@@ -181,7 +137,7 @@
 
 \begin{frame}{Intel Software Guard Extensions}{Confidentiality}
     \begin{itemize}
-    	\item Confidentiality is guaranteed by
+    	\item Confidentiality is guaranteed by:
 
 			\vfill
 
@@ -208,35 +164,32 @@
 % \end{frame}
 
 \begin{frame}{Intel Software Guard Extensions}{Remote attestation}
-    \begin{itemize}
-    	\item Remote attestation allows remote processes to verify if they are running the same enclave:
-    	\begin{itemize}
+	\begin{itemize}
 
-  			\vfill
+		\vfill
 
-    		\item Requires an EPID private key
-    		\begin{itemize}
-    			\item One public key, many private keys
-    			\item Intel provisions this key during first SGX run
-    		\end{itemize}
+		\item Requires an EPID private key
+		\begin{itemize}
+			\item One public key, many private keys
+			\item Intel provisions this key during first SGX run
+		\end{itemize}
 
-  			\vfill
+		\vfill
 
-    		\item Special rights enclave (Quoting Enclave) locally attests enclave
+		\item Special rights enclave (Quoting Enclave) locally attests enclave
 
-  			\vfill
+		\vfill
 
-    		\item Upon successful attestation, QE signs the local attestation with EPID private key
+		\item Upon successful attestation, QE signs the local attestation with EPID private key
 
-  			\vfill
+		\vfill
 
-    		\item When received by a remote enclave, the attestation will uniquely identify the enclave, and the signature will prove that a QE has locally attested it.
+		\item When received by a remote enclave, the attestation will uniquely identify the enclave, and the signature will prove that a QE has locally attested it
 
-  			\vfill
+		\vfill
 
-  			\item In practise, remote attestation also requires contact to an Intel server, for revocation of leaked private keys
-    	\end{itemize}
-    \end{itemize}
+		\item In practice, remote attestation also requires contact to an Intel server, for revocation of leaked private keys
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Transforming byzantine faults}{Idea} %Frederik
@@ -258,15 +211,15 @@
 
 \begin{frame}{Transforming byzantine faults}{Intuition}
 	\begin{itemize}
-		\item Intuition: Integrity protects enclaves from experiencing byzantine faults.
+		\item Integrity protects enclaves from experiencing byzantine faults
 
   	\vfill
 
-		\item Intuition: Confidentiality protects enclaves from other, byzantine components.
+		\item Confidentiality protects enclaves from other components
 
   	\vfill
 
-		\item Intuition: With a byzantine protected subprocess, other subprocesses can be protected through that.
+		\item With a byzantine protected subprocess, other subprocesses can be protected through that
 
 	\end{itemize}
 \end{frame}
@@ -281,7 +234,7 @@
 
   	\vfill
 
-		\item Provision enclaves with symmetric key through remote attestation.
+		\item Provision enclaves with symmetric key through remote attestation
 
   	\vfill
 
@@ -293,37 +246,83 @@
 
   	\vfill
 
-		\item Integrity guarantees that the enclave does not sign message after experiencing byzantine fault.
+		\item Integrity guarantees that the enclave does not sign message after experiencing byzantine fault
 
   	\vfill
 
-  	\item Confidentiality guarantees that other components cannot access the shared key.
+  	\item Confidentiality guarantees that other components cannot access the shared key
 
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Transforming byzantine faults}{Result}
-    \begin{itemize}
-    	\item We thus gain following guarantees:
+	\begin{itemize}
+		\item On byzantine errors in the wrapper components, it can at most drop, redirect or corrupt messages
+		\begin{itemize}
+			\item Redirects are handled by unique ids, and will be dropped by the receiving enclave
+			\item Corrupted messages will be dropped by the enclave
+			\item So this is equivalent to dropped messages
+		\end{itemize}
 
-  		\vfill
+	\vfill
 
-    	\begin{itemize}
-    		\item On byzantine errors in the wrapper components, it can at most drop, redirect or corrupt messages
-    		\begin{itemize}
-    			\item Redirects are handled by unique ids, and will be dropped by the receiving enclave.
-    			\item Corrupted messages will be dropped by the enclave
-    			\item So this is equivalent to dropped messages
-    		\end{itemize}
+		\item On byzantine errors in the enclave components, the integrity guarantee will ensure wrong/no MACing of messages
+		\begin{itemize}
+			\item Either the enclave infinitely retries MAC attempts (crash), or wrongly MACed messages will be dropped
+		\end{itemize}
+	\end{itemize}
+\end{frame}
 
-	  	\vfill
+\begin{frame}{Dynamic Condition Response graphs}{Basics}%frederik
+	\begin{tabular}{lc}
+	  \parbox{0.5\linewidth}{\begin{itemize}
+			\item Declarative graph representation of a workflow	
+			\vfill
+			\item Events: nodes representing possible events and actions of the workflow
+			\vfill
+			\item Relations: directed edges representing constraints and effects in the workflow
+		\end{itemize}
+		}
+		&
+	  \parbox{0.5\linewidth}{
+		\begin{figure}[p]
+			\includegraphics[scale=0.08]{figures/example6.png}
+		\end{figure}
+		}
+	\end{tabular}
+	% Workflow
+	% events
+	% relations (directed edges)
+	% eksempel
+	% concurrency
+\end{frame}
 
-    		\item On byzantine errors in the enclave components, the integrity guarantee will ensure wrong/no MACing of messages
-    		\begin{itemize}
-    			\item Either the enclave infinitely retries MAC attempts (crash), or wrongly MACed messages will be dropped
-    		\end{itemize}
-    	\end{itemize}
-    \end{itemize}
+\begin{frame}{Dynamic Condition Response graphs}{Concurrency}
+	\begin{itemize}
+		\item Dynamic independency:
+		\begin{itemize}
+			\item In given graph state $G$: $E(E(G, e_1),e_2)=E(E(G, e_2),e_1)$
+		\end{itemize}
+
+		\vfill
+
+		\item Static independency:
+		\begin{itemize}
+			\item Dynamic independency in any \textit{reachable} state of $G$
+		\end{itemize}
+
+		\vfill
+
+		\item Approximate static independency:
+		\begin{itemize}
+		 	\item Dynamic independency for \textit{any} state of $G$
+		 	\item Seems harder, but is easier, because it can be calculated only using the relations, disregarding the events' state
+		\end{itemize}
+
+		\vfill
+
+		\item We want to support dynamic independency because it allows for more concurrency
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Execution ordering}{Race condition}%mikkel
@@ -416,7 +415,7 @@
     \item Leadership
     \begin{itemize}
       \item Accept client commands
-      \item 2 phase commit with quorum
+      \item Two-phase commit with quorum
     \end{itemize}
   \end{itemize}
 
@@ -524,9 +523,11 @@ void recv_append_req(append_req_t req) {
 
 \begin{frame}{Smart contracts}{Transformation}%mikkel
     \begin{itemize}
-    	\item Events containing arbitrary state.
-    	\item Effects changing arbitrary state.
-    	\item Constraints checking arbitrary state.
+    	\item Events containing arbitrary state
+    	\vfill
+    	\item Effects changing arbitrary state
+    	\vfill
+    	\item Constraints checking arbitrary state
     \end{itemize}
 \end{frame}
 
@@ -535,7 +536,7 @@ void recv_append_req(append_req_t req) {
 	\includegraphics[scale=0.5]{figures/dao-simple.pdf}
 \end{frame}
 
-\begin{frame}{Smart contracts}{dao-parametrised DAO}
+\begin{frame}{Smart contracts}{Parametrised DAO}
 	\centering
 	\includegraphics[scale=0.5]{figures/dao-parametrised.pdf}
 \end{frame}
