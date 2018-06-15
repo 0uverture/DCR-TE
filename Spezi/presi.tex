@@ -5,17 +5,12 @@
 
 \beamertemplatenavigationsymbolsempty
 
-\title{Trusted DCR: Decentralised workflow management in a byzantine setting}
+\title{~\\ ~\\ ~\\ Trusted DCR: Decentralised workflow management in a byzantine setting}
 \author{Mikkel Gaub \and Malthe Ettrup Kirkbro \and Mads Frederik Madsen}
-\date{June 21, 2018}
+\date{~\\ ~\\ ~\\ \center June 21, 2018 }
 
 \usetheme{metropolis}
 
-
-% \setbeamertemplate{framesubtitle}{%
-%      \begin{beamercolorbox}[wd=\paperwidth,ht=3ex,dp=6ex,left]{framesubtitle}%
-%        \hspace*{2ex}\insertframesubtitle%
-%      \end{beamercolorbox}} 
 \def \emptysubtitle {}
 \addtobeamertemplate{frametitle}{}{%
   \ifx\insertframesubtitle \emptysubtitle%
@@ -51,7 +46,21 @@
 
 \begin{frame}{Problem}%frederik
 \begin{itemize}
-	\item Create a scalable, fault tolerant decentralised DCR engine.
+	\item Create a fault tolerant decentralised DCR engine:
+
+	\vfill
+
+	\begin{itemize}
+		\item High degree of concurrency.
+	
+		\vfill
+
+		\item Scalable (less than $O(n)$ messages per execution).
+	
+		\vfill
+		
+		\item Byzantine fault tolerant.
+	\end{itemize}
 \end{itemize}
 	% skriv problem
 	% kontekstualisér
@@ -95,15 +104,15 @@
 
   		\item Static independency:
   		\begin{itemize}
-  			\item Dynamic dependency in any \textit{reachable} state of $G$.
+  			\item Dynamic independency in any \textit{reachable} state of $G$.
   		\end{itemize}
 
 			\vfill
 
 			\item Approximate static independency:
 			\begin{itemize}
-			 	\item Dynamic dependency for \textit{any} state of $G$.
-			 	\item Seems harder, but is easier, because it can be calculated only using the relation, disregarding the events' state.
+			 	\item Dynamic independency for \textit{any} state of $G$.
+			 	\item Seems harder, but is easier, because it can be calculated only using the relationa, disregarding the events' state.
 			\end{itemize} 
   	\end{itemize}
 
@@ -291,6 +300,30 @@
   	\item Confidentiality guarantees that other components cannot access the shared key.
 
 	\end{itemize}
+\end{frame}
+
+\begin{frame}{Transforming byzantine faults}{Result}
+    \begin{itemize}
+    	\item We thus gain following guarantees:
+
+  		\vfill
+
+    	\begin{itemize}
+    		\item On byzantine errors in the wrapper components, it can at most drop, redirect or corrupt messages
+    		\begin{itemize}
+    			\item Redirects are handled by unique ids, and will be dropped by the receiving enclave.
+    			\item Corrupted messages will be dropped by the enclave
+    			\item So this is equivalent to dropped messages
+    		\end{itemize}
+
+	  	\vfill
+
+    		\item On byzantine errors in the enclave components, the integrity guarantee will ensure wrong/no MACing of messages
+    		\begin{itemize}
+    			\item Either the enclave infinitely retries MAC attempts (crash), or wrongly MACed messages will be dropped
+    		\end{itemize}
+    	\end{itemize}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Execution ordering}{Race condition}%mikkel
