@@ -169,26 +169,33 @@
 		\vfill
 
 		\item Requires an EPID private key
-		\begin{itemize}
-			\item One public key, many private keys
-			\item Intel provisions this key during first SGX run
-		\end{itemize}
+		% \begin{itemize}
+		% 	\item One public key, many private keys
+		% 	\item Intel provisions this key during first SGX run
+		% \end{itemize}
 
 		\vfill
 
-		\item Special rights enclave (Quoting Enclave) locally attests enclave
+		\item Quoting Enclave (QE) locally attests enclave
 
 		\vfill
 
-		\item Upon successful attestation, QE signs the local attestation with EPID private key
+		\item On local attestation, QE signs the attestation with EPID private key
 
 		\vfill
 
-		\item When received by a remote enclave, the attestation will uniquely identify the enclave, and the signature will prove that a QE has locally attested it
+		\item When received by a remote enclave:
+    \begin{itemize}
+       \item The attestation will uniquely identify the enclave
+       \item The signature will prove that a QE has locally attested it
+     \end{itemize}
 
 		\vfill
 
-		\item In practice, remote attestation also requires contact to an Intel server, for revocation of leaked private keys
+		\item In practice, remote attestation requires contact to Intel server:%
+    \begin{itemize}
+       \item Revocation of leaked private keys
+     \end{itemize} 
 	\end{itemize}
 \end{frame}
 
@@ -308,7 +315,7 @@
 
 		\item Static independency:
 		\begin{itemize}
-			\item Dynamic independency in any \textit{reachable} state of $G$
+			\item Dynamic independency in any \textit{reachable} state from $G$
 		\end{itemize}
 
 		\vfill
@@ -321,7 +328,7 @@
 
 		\vfill
 
-		\item We want to support dynamic independency because it allows for more concurrency
+		\item Dynamic independency allows for more concurrency
   \end{itemize}
 \end{frame}
 
