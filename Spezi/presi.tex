@@ -3,6 +3,7 @@
 \usepackage{lmodern}
 \usepackage{booktabs}
 \usepackage{listings}
+% \usepackage[inline]{enumitem}
 \beamertemplatenavigationsymbolsempty
 
 \title{~\\ ~\\ ~\\ Trusted DCR: Decentralised workflow management in a byzantine setting}
@@ -30,53 +31,65 @@
 \begin{document}
 \maketitle
 
+\begin{frame}{Problem}%frederik
+\begin{itemize}
+  \item Create a fault tolerant decentralised DCR engine:
+
+  \vfill
+
+  \begin{itemize}
+    \item High degree of concurrency
+
+    \vfill
+
+    \item Scalable (less than $O(n)$ messages per execution)
+
+    \vfill
+
+    \item Byzantine fault tolerant
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Introduction}%frederik
-%contributions
-%
-    \begin{itemize}
-    	\item
-    \end{itemize}
+  \begin{figure}[p]
+    \includegraphics[scale=0.35]{figures/topics2.pdf}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Overview}%frederik
 	\begin{itemize}
-\item Problem
-\item Intel Software Guard Extensions
-\item Transforming byzantine faults
-\item Dynamic Condition Response graphs
-\item Execution ordering
-\item Global history
-\item Cluster consensus
-\item Trusted DCR
-\item Implementation
-\item Demo
-\item Performance
-\item Security
-\item Smart contracts
+    \item SGX \& Byzantine failures
+    \begin{itemize}
+      \item Intel Software Guard Extensions
+      \item Transforming byzantine faults
+     
+    \end{itemize}
+    \item Decentralised DCR
+    \begin{itemize}
+       \item Dynamic Condition Response graphs
+      \item Execution ordering
+      \item Global history
+      \item Cluster consensus
+      \item Trusted DCR
+    \end{itemize}
+    \item Experiments
+    \begin{itemize}
+      \item Implementation
+      \item Demo
+      \item Performance 
+    \end{itemize}
+    \item Discussion
+    \begin{itemize}
+      \item Security
+      \item Smart contracts
+    \end{itemize}
 	\end{itemize}
 \end{frame}
-
-\begin{frame}{Problem}%frederik
-\begin{itemize}
-	\item Create a fault tolerant decentralised DCR engine:
-
-	\vfill
-
-	\begin{itemize}
-		\item High degree of concurrency
-
-		\vfill
-
-		\item Scalable (less than $O(n)$ messages per execution)
-
-		\vfill
-
-		\item Byzantine fault tolerant
-	\end{itemize}
-\end{itemize}
 	% skriv problem
 	% kontekstualisér
-\end{frame}
+
+\section{SGX \& Byzantine failures}
 
 \begin{frame}{Intel Software Guard Extensions}{SGX}%frederik
 	\begin{itemize}
@@ -201,15 +214,12 @@
 
 \begin{frame}{Transforming byzantine faults}{Idea} %Frederik
   \begin{itemize}
-  	\item Given integrity, confidentiality and remote attestation from SGX
+  	\item Given integrity, confidentiality and remote attestation from SGX.
 
   	\vfill
 
-  	\item We can make a transformation of distributed protocols
-
-  	\vfill
-
-  	\item Crash-fault tolerant to byzantine fault tolerant
+  	\item We can make a transformation of distributed protocols:\\
+    crash-fault tolerant to byzantine fault tolerant
   	\begin{itemize}
   		\item Must handle unreliable channels
   	\end{itemize}
@@ -241,7 +251,7 @@
 
   	\vfill
 
-		\item Provision enclaves with symmetric key through remote attestation
+		\item Provision enclaves with a shared symmetric key through remote attestation
 
   	\vfill
 
@@ -264,7 +274,7 @@
 
 \begin{frame}{Transforming byzantine faults}{Result}
 	\begin{itemize}
-		\item On byzantine errors in the wrapper components, it can at most drop, redirect or corrupt messages
+		\item On byzantine faults in the wrapper components, it can at most drop, redirect or corrupt messages
 		\begin{itemize}
 			\item Redirects are handled by unique ids, and will be dropped by the receiving enclave
 			\item Corrupted messages will be dropped by the enclave
@@ -273,12 +283,14 @@
 
 	\vfill
 
-		\item On byzantine errors in the enclave components, the integrity guarantee will ensure wrong/no MACing of messages
+		\item On byzantine faults in the enclave components, the integrity guarantee will ensure wrong/no MACing of messages
 		\begin{itemize}
 			\item Either the enclave infinitely retries MAC attempts (crash), or wrongly MACed messages will be dropped
 		\end{itemize}
 	\end{itemize}
 \end{frame}
+
+\section{Decentralised DCR}
 
 \begin{frame}{Dynamic Condition Response graphs}{Basics}%frederik
 	\begin{tabular}{lc}
@@ -315,14 +327,14 @@
 
 		\item Static independency:
 		\begin{itemize}
-			\item Dynamic independency in any \textit{reachable} state from $G$
+			\item Dynamic independency in all \textit{reachable} states from $G$
 		\end{itemize}
 
 		\vfill
 
 		\item Approximate static independency:
 		\begin{itemize}
-		 	\item Dynamic independency for \textit{any} state of $G$
+		 	\item Dynamic independency for \textit{all} states of $G$
 		 	\item Seems harder, but is easier, because it can be calculated only using the relations, disregarding the events' state
 		\end{itemize}
 
@@ -476,13 +488,17 @@
   \vfill
 \end{frame}
 
-\begin{frame}{Demo}%Malthe
-
+\begin{frame}{Demo}%Malthe    
+  \begin{figure}[p]
+    \includegraphics[scale=0.13]{figures/example6.png}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Performance}%Malthe
 
 \end{frame}
+
+\section{Discussion}
 
 \begin{frame}{Security}{Known vulnerabilities}%Malthe
   \begin{itemize}
