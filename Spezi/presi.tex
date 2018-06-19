@@ -395,8 +395,15 @@
 \end{frame}
 
 \begin{frame}{Global history}{Consistent cut}
-	\centering
-    \includegraphics[scale=0.6]{figures/consistent-cut.pdf}
+ 	\begin{columns}[T, onlytextwidth]
+        \begin{column}{0.5\textwidth}
+        	\vspace{2cm}
+			\includegraphics[width=0.95\linewidth]{figures/inconsistent-cut.pdf}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+        	\includegraphics[width=\linewidth]{figures/consistent-cut.pdf}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Global history}{Ordering}
@@ -584,10 +591,17 @@ void recv_append_req(append_req_t req) {
 \end{frame}
 
 \begin{frame}{Summary}%mikkel
+\begin{itemize}
+	\item Contributions
 	\begin{itemize}
-		\item Relies on Intel hardware, code and secrecy
-		\item Requires TPM on all clients
+		\item Transformation of distributed crash tolerant algorithms
+		\item Trusted DCR
+		\item SGX Raft
+		\item CheapShot
+		\item Generalisation of Trusted DCR
 	\end{itemize}
+	\item Relies on Intel
+\end{itemize}
 \end{frame}
 
 \end{document}
