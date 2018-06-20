@@ -4,9 +4,9 @@ set ylabel 'exec/s'
 unset key
 set grid
 set tics out nomirror
-set border 3 front linetype black linewidth 1.0 dashtype solid
+set border 3 front
 
-set xrange [0:30]
+set xrange [0:6]
 set yrange [0:3]
 
 set datafile separator ";"
