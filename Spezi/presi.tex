@@ -385,6 +385,23 @@
     \end{itemize}
 \end{frame}
 
+\begin{frame}{Global history}{Overview}
+	\begin{itemize}
+		\item $O(e)$ messages
+		\vfill
+		\item CheapShot
+		\begin{itemize}
+			\item Collect observed
+			\vfill
+			\item Make cut consistent
+			\vfill
+			\item Execution graph
+			\vfill
+			\item Topological ordering
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
 \begin{frame}{Global history}{Collection}%mikkel
     \begin{itemize}
     	\item Observed executions returned from each event
@@ -416,7 +433,15 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Cluster consensus}%mikkel
+\begin{frame}{Cluster consensus}{Reasoning}
+	\begin{itemize}
+		\item Need fault tolerance
+		\item Event cluster
+		\item Consensus problem
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Cluster consensus}{Options}%mikkel
 \resizebox{\textwidth}{!}{
 	\begin{tabular}{l p{3cm} p{1.5cm} l p{1.7cm}}
         \toprule
@@ -426,7 +451,7 @@
     	MinBFT           	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $2(f+1)^2$              & $2(f+1)+(f+1)^2$             & Byzantine 				     \\
     	FastBFT           	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $(f+1)$               	& $4(f+1)$                     & Byzantine 				     \\
     	Chandra-Toueg    	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $0$                     & $4(f+1)+(f+1)^2$             & Crash                         \\
-    	Paxos  				& $f = \lfloor \frac{n-1}{2} \rfloor$ & $0$                     & $4(f+1) + 2$                 & Crash                         \\
+    	Paxos  				& $f = \lfloor \frac{n-1}{2} \rfloor$ & $0$                     & $4(f+1)$                 & Crash                         \\
     	Raft               	& $f = \lfloor \frac{n-1}{2} \rfloor$ & $2(f+1)$                & $2(f+1)$                     & Crash                         \\
         \bottomrule
 	\end{tabular}
